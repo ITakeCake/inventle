@@ -1,4 +1,4 @@
-# Inventle Stats Backend — Setup Guide
+# Inventle Stats Backend Setup Guide
 
 ## Prerequisites
 - Cloudflare account (free tier works)
@@ -41,7 +41,7 @@ wrangler deploy
 This gives you a URL like: `https://inventle-stats.YOUR_SUBDOMAIN.workers.dev`
 
 ## Step 7: Update Frontend
-Point the client at your Worker. The URL appears in three files — `js/game.js`
+Point the client at your Worker. The URL appears in three files, `js/game.js`
 (top of file, `INVENTLE_API`), `js/global-stats.js` and `js/report.js`:
 ```javascript
 var INVENTLE_API = 'https://inventle-stats.YOUR_SUBDOMAIN.workers.dev';
@@ -77,7 +77,7 @@ invention appears on a given day by applying a seeded permutation to that list.
 
 The daily client never receives the answer: `js/data-daily.js` ships names and
 descriptions but no years, so the year exists only server-side and every guess
-is graded by the Worker. (Infinite mode is different — it needs the whole
+is graded by the Worker. (Infinite mode is different, it needs the whole
 dataset locally, so `js/data.js` includes years there.)
 
 The permutation is redacted in the public repository, since publishing it would
@@ -86,7 +86,7 @@ your own seed.
 
 **Flow:**
 1. Client loads and fetches `/api/puzzle?date=YYYY-MM-DD`
-2. The response supplies the invention name and description — never the year
+2. The response supplies the invention name and description, never the year
 3. Each guess is POSTed to `/api/guess`, which returns per-digit colours
 4. Until the fetch resolves, guessing is blocked and the page says so; if the
    server is unreachable the daily puzzle cannot be played
@@ -122,7 +122,7 @@ destination in `REPORT_TO` at the top of `src/index.js`.
 ## Privacy
 - IP addresses are NEVER stored in the database
 - Country is derived from Cloudflare's edge geolocation (`request.cf.country`)
-- The IP never reaches the Worker code — Cloudflare resolves it at the network level
+- The IP never reaches the Worker code, Cloudflare resolves it at the network level
 - A gameplay fingerprint hash is used for dedup but cannot identify anyone
 - All stored data is fully anonymous
 

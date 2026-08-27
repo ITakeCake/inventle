@@ -72,7 +72,7 @@ The full list lives in `YEAR_RANGES` in the Worker, with the client mirror in `j
 
 **One year per invention everywhere else.** "Invented" can mean conceived, patented, prototyped, or sold, and sources pick different moments. Where the choice was contested we either picked the most commonly cited year or promoted the entry into a range. The remaining 691 single year answers are the most defensible date, not the only defensible date.
 
-**Digit feedback is per digit, not per distance.** Guessing 1899 against an answer of 1900 shows three slate tiles even though the guess is one year off. The amber tile means that digit is off by one, not that the year is close. This is the trade that makes the game a digit puzzle rather than a hotter or colder guessing game, and the AD/BC era is graded separately so a 500 BC guess against 500 AD does not read as exact.
+**Digit feedback is per digit, not per distance.** Guessing 1899 against an answer of 1900 shows green, amber, slate, slate, even though the guess is only one year off. The two nines read as far from the two zeros because each tile compares its own digit, an amber tile means that digit is off by one, not that the year is close. This is the trade that makes the game a digit puzzle rather than a hotter or colder guessing game. The AD/BC era is graded first, a guess in the wrong era shows four slate tiles no matter how close the digits are.
 
 **Ancient dates are approximations.** Anything BC is scholarship, not record keeping. Those entries either carry wide ranges or a conventional round number.
 
@@ -100,7 +100,9 @@ The multiple choice options are generated with a seeded shuffle keyed to the puz
 
 ### The principles
 
-No accounts, no cookies, no fingerprinting, no IP storage. Your personal play history, streaks, and preferences live in your own browser's localStorage and never leave your device. The Personal tab of the stats page reads that local data in place.
+No accounts, no fingerprinting, no IP storage, and the game itself sets no cookies. Your personal play history, streaks, and preferences live in your own browser's localStorage and never leave your device. The Personal tab of the stats page reads that local data in place.
+
+The live site shows ads from a third party network, isolated in iframes. Whatever that network does happens inside its frame and is governed by its own policies, none of the game's telemetry is shared with it.
 
 The global numbers come from anonymous, aggregate telemetry. The full privacy notes live in `worker/SETUP.md`, and the short version is below.
 
@@ -124,7 +126,7 @@ A second tiny ping fires on the first guess of a game. Joining starts against fi
 
 ### What we deliberately do not have
 
-**No IP addresses.** Country comes from Cloudflare's edge geolocation, which resolves at the network level before the request reaches Worker code. The Worker reads a two letter country code and nothing else.
+**No IP addresses.** Country comes from Cloudflare's edge geolocation, which resolves at the network level before the request reaches Worker code. The Worker sees a two letter country code, never the address itself.
 
 **No identity.** A one way SHA-256 dedup hash prevents the same finished game being counted twice on a reload. It is derived from a random per puzzle session id, not from anything about the person, and cannot be reversed into anyone.
 
@@ -144,13 +146,13 @@ erDiagram
         text country
         int hour_utc
         int mobile
-        text dedup_hash UK
+        text dedup_hash UK "unique, same recipe as game_results"
     }
     game_results {
         int id PK
         int puzzle_num
         text play_date
-        text country
+        text country "2 letter code from the edge"
         int won
         int guesses
         int total_time
@@ -163,26 +165,26 @@ erDiagram
         int color_scheme
         int streak
         int hour_utc
-        text dedup_hash
+        text dedup_hash "one way hash, blocks double counting"
     }
     puzzle_stats {
         int puzzle_num PK
-        text country PK
+        text country PK "per country plus an ALL row"
         int total_players
         int total_wins
-        int dist_1_to_6
-        int total_time
+        int dist_1 "through dist_6, guess distribution"
+        int b1_played "bonus round counters"
         int mobile_count
         int bc_used_count
-        int streak_sum
-        int scheme_0_to_3
+        int scheme_0 "through scheme_3"
+        int streak_max
     }
     daily_stats {
         text play_date PK
         text country PK
         int total_players
         int total_wins
-        int dist_1_to_6
+        int dist_1 "through dist_6"
         int shared_count
         int first_guess_sum
         int streak_max
@@ -190,14 +192,31 @@ erDiagram
     reports {
         int id PK
         text created
-        text email
+        text email "given voluntarily by the reporter"
         text message
         text page
-        text ip_hash
+        text country
+        text ip_hash "one way hash, rate limiting only"
+        int emailed
     }
-    game_starts ||--o| game_results : "joins by dedup_hash, no match means abandoned"
-    game_results ||--|| puzzle_stats : "increments per puzzle aggregates"
-    game_results ||--|| daily_stats : "increments per day aggregates"
+    game_starts |o--o| game_results : "same dedup_hash, no match means abandoned"
+    game_results }o--|| puzzle_stats : "aggregated per puzzle"
+    game_results }o--|| daily_stats : "aggregated per day"
+```
+
+The write path, end to end.
+
+```mermaid
+flowchart LR
+    A[First guess] -- start ping --> W((Worker))
+    B[Game finishes] -- result beacon --> W
+    W --> S[(game_starts)]
+    W --> R[(game_results)]
+    W -- increments --> P[(puzzle_stats)]
+    W -- increments --> D[(daily_stats)]
+    P --> DASH[Stats dashboard]
+    D --> DASH
+    S -. joined against results .-> DASH
 ```
 
 Every aggregate row exists twice, once per country and once under the country code ALL, so the dashboard can filter by country without scanning game rows.
@@ -226,7 +245,7 @@ npx wrangler dev
 
 ## Sound credits
 
-All sound effects come from [Pixabay](https://pixabay.com) under the [Pixabay Content License](https://pixabay.com/service/license-summary/), which allows free use without attribution. We credit the creators anyway, they earned it.
+Most sound effects come from [Pixabay](https://pixabay.com) under the [Pixabay Content License](https://pixabay.com/service/license-summary/), which allows free use without attribution. We credit the creators anyway, they earned it. The rest, the digit spin, the digit landing, the era flip, and both win glows, are synthesized at runtime with the Web Audio API and use no recordings at all.
 
 | Sound in game | Effect | Creator |
 | ------------- | ------ | ------- |
@@ -240,7 +259,7 @@ All sound effects come from [Pixabay](https://pixabay.com) under the [Pixabay Co
 | Shield earned | [Metal Hit](https://pixabay.com/sound-effects/metal-hit-153323/) | [Universfield](https://pixabay.com/users/universfield-28281460/) |
 | Shield used | [Metal Punch](https://pixabay.com/sound-effects/metal-punch-142334/) | [Universfield](https://pixabay.com/users/universfield-28281460/) |
 
-The audio files themselves are not in this repository, the license covers use on the site but not redistribution of the files. `js/sound.js` degrades to silence when they are absent.
+The enter key press is a separately sourced recording. The audio files themselves are not in this repository, the license covers use on the site but not redistribution of the files. When a file is absent, `js/sound.js` falls back to a small synthesized tick for the key sounds and stays silent for the rest.
 
 ## Data
 

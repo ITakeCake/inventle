@@ -1,4 +1,4 @@
-# inventions.json — Data Conventions
+# inventions.json Data Conventions
 
 Reference for anyone editing `inventions.json` or `worker/inventions_minified.json`.
 The minified file is regenerated from the source: `node -e "const d=JSON.parse(require('fs').readFileSync('inventions.json','utf8'));require('fs').writeFileSync('worker/inventions_minified.json',JSON.stringify(d))"`
@@ -40,12 +40,12 @@ Every entry must have exactly these 6 fields:
 - `historical`: Name of the political entity at the time of invention (e.g. "Holy Roman Empire", "Kingdom of Great Britain", "Ancient Greece")
 
 ### inventor
-- **Single person**: Full name — `"Johannes Gutenberg"`
-- **Two people**: Use `"and"` — `"Larry Page and Sergey Brin"`
-- **Multiple groups/civilizations**: Use `","` — `"Ancient Persians, Egyptians"`
-- **Company/organization**: Name only — `"Bell Labs"`, `"Chrysler"`, `"EDF"`
+- **Single person**: Full name, `"Johannes Gutenberg"`
+- **Two people**: Use `"and"`, `"Larry Page and Sergey Brin"`
+- **Multiple groups/civilizations**: Use `","`, for example `"Ancient Persians, Egyptians"`
+- **Company/organization**: Name only, `"Bell Labs"`, `"Chrysler"`, `"EDF"`
 - **Unknown**: `"Unknown"` (capitalized)
-- **Never** use `&` — always spell out `and`
+- **Never** use `&`, always spell out `and`
 
 ### category
 Valid categories (28 total):
