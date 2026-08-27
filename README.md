@@ -245,7 +245,7 @@ npx wrangler dev
 
 ## Sound credits
 
-Most sound effects come from [Pixabay](https://pixabay.com) under the [Pixabay Content License](https://pixabay.com/service/license-summary/), which allows free use without attribution. We credit the creators anyway, they earned it. The rest, the digit spin, the digit landing, the era flip, and both win glows, are synthesized at runtime with the Web Audio API and use no recordings at all.
+Most sound effects come from [Pixabay](https://pixabay.com) under the [Pixabay Content License](https://pixabay.com/service/license-summary/), which allows free use without attribution. We credit the creators anyway. The rest, the digit spin, the digit landing, the era flip, and both win glows, are synthesized at runtime with the Web Audio API and use no recordings at all.
 
 | Sound in game | Effect | Creator |
 | ------------- | ------ | ------- |
