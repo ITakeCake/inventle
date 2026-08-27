@@ -259,6 +259,10 @@ Most sound effects come from [Pixabay](https://pixabay.com) under the [Pixabay C
 | Strike taken | [Hammer Steel Impact](https://pixabay.com/sound-effects/hammer-steel-impact-454390/) | [Universfield](https://pixabay.com/users/universfield-28281460/) |
 | Shield earned | [Metal Hit](https://pixabay.com/sound-effects/metal-hit-153323/) | [Universfield](https://pixabay.com/users/universfield-28281460/) |
 | Shield used | [Metal Punch](https://pixabay.com/sound-effects/metal-punch-142334/) | [Universfield](https://pixabay.com/users/universfield-28281460/) |
+| Panel folds up | [Nothing yet] | [Nothing yet] |
+| Panel folds down | [Nothing yet] | [Nothing yet] |
+| Modal opens | [Nothing yet] | [Nothing yet] |
+| Modal closes | [Nothing yet] | [Nothing yet] |
 
 The audio files themselves are not in this repository, the license covers use on the site but not redistribution of the files. When a file is absent, `js/sound.js` falls back to a small synthesized tick for the key sounds and stays silent for the rest.
 
