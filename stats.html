@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Inventle Global Stats — How the World Is Guessing Today</title>
+<meta name="description" content="Live global stats for today's Inventle puzzle: win rate, guess distribution, and a world map of how players everywhere are guessing invention years.">
+<link rel="canonical" href="https://inventle.io/stats">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Inventle">
+<meta property="og:title" content="Inventle Global Stats — How the World Is Guessing Today">
+<meta property="og:description" content="See how players around the world are solving today's daily invention puzzle: win rate, guess distribution, and a live world map.">
+<meta property="og:url" content="https://inventle.io/stats">
+<meta property="og:image" content="https://inventle.io/og-image.png?v=4">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Inventle — guess the year the invention was made">
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Inventle Global Stats — How the World Is Guessing Today">
+<meta name="twitter:description" content="See how players around the world are solving today's daily invention puzzle.">
+<meta name="twitter:image" content="https://inventle.io/og-image.png?v=4">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&family=Nunito:wght@800;900&family=Source+Code+Pro:wght@400;700&display=fallback">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&family=Nunito:wght@800;900&family=Source+Code+Pro:wght@400;700&display=fallback">
+<link rel="stylesheet" href="css/main.css?v=14">
+<link rel="stylesheet" href="css/global-stats.css?v=b23">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap/dist/jsvectormap.min.css">
+<style>
+  /* ---------------------------------------------------
+     MODERN CLEAN UI OVERRIDES (Matches Experiment 3)
+     --------------------------------------------------- */
+  html {
+    background: var(--bg);
+  }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+    background: var(--bg) !important;
+    transition: background-color 0.3s ease;
+    height: auto;
+    overflow: visible;
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  /* Refined Light/Dark Palette */
+  body[data-theme="dark"] {
+    --bg: #0f1115;
+    --surface: #1e2128;
+    --surface2: #1a1a1a; /* Restored to original dark mode map color */
+    --surface-hover: #2a2e37;
+    --text: #f0f2f5;
+    --text2: #a1aab8;
+    --text3: #6b7280;
+    --border: #374151;
+    --primary: #3b82f6; /* Modern Blue */
+    --right: #10b981; /* Emerald Green */
+    --near: #f59e0b; /* Amber */
+    --wrong: #374151; /* Slate */
+  }
+
+  body[data-theme="light"] {
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --surface2: #e2e8f0;
+    --surface-hover: #f1f5f9;
+    --text: #0f172a;
+    --text2: #475569;
+    --text3: #94a3b8;
+    --border: #e2e8f0;
+    --primary: #2563eb;
+    --right: #10b981;
+    --near: #f59e0b;
+    --wrong: #cbd5e1;
+  }
+
+  body[data-scheme="0"] { --right: #10b981; --near: #f59e0b; }
+  body[data-scheme="1"] { --right: #3b82f6; --near: #f97316; }
+  body[data-scheme="2"] { --right: #14b8a6; --near: #f43f5e; }
+  body[data-scheme="3"] { --right: #8b5cf6; --near: #eab308; }
+
+  /* Header refinements */
+  header {
+    max-width: 100%;
+    width: 100%;
+    padding: 1rem 1.5rem;
+    border-bottom: 2px solid var(--border);
+    background: var(--bg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Desktop header scaling */
+  @media (min-width: 481px) {
+    header { padding: 1rem 2rem; }
+    .logo { font-size: 2.2rem; }
+    .hdr-btns { gap: 12px; }
+    .hdr-btns button { width: 40px; height: 40px; }
+    .hdr-btns button svg { width: 20px; height: 20px; }
+    #btn-menu { width: 40px !important; height: 40px !important; }
+    #btn-menu svg { width: 20px; height: 20px; }
+    header > div:first-child { gap: 20px !important; }
+  }
+  .logo { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; line-height: 1; color: var(--right); display: inline-block; }
+  .logo .tle { color: var(--near); }
+  .logo .dot-i { position: relative; display: inline-block; }
+  .logo .dot-circle { position: absolute; width: 0.19em; height: 0.19em; border-radius: 50%; background: var(--near); top: 0.05em; left: 50%; transform: translateX(-50%); }
+  
+  .logo-stats-text {
+    color: var(--text3);
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-left: 4px;
+    letter-spacing: -0.5px;
+  }
+  
+  .hdr-btns button {
+    color: var(--text2);
+    border-radius: 8px;
+    padding: 6px;
+    transition: all 0.2s ease;
+  }
+  .hdr-btns button:hover {
+    background: var(--surface-hover);
+    color: var(--text);
+  }
+  /* muted sound button — the crossed-out icon carries the meaning, this just
+     softens it so an off control does not read as an active one */
+  .hdr-btns button#btn-sound.muted { color: var(--text3); }
+  .hdr-btns button#btn-sound.muted:hover { color: var(--text2); }
+  @media (max-width: 480px) {
+    header { padding: 10px 16px; }
+    .logo { font-size: 1.44rem; }
+    .logo .dot-circle { width: 0.17em; height: 0.17em; }
+    .logo-stats-text { display: none; }
+    .setting-row:has(#set-rainbow) { display: none; }
+    .hdr-btns { gap: 6px; }
+    .hdr-btns button { width: 28px; height: 28px; border-radius: 6px; }
+    .hdr-btns button svg { width: 13px; height: 13px; }
+    #btn-menu { width: 28px !important; height: 28px !important; }
+    #btn-menu svg { width: 13px; height: 13px; }
+  }
+
+  /* Stats page overrides */
+  #global-page { display:block !important; padding-top: 20px;}
+  #gp-back { display:none; }
+
+  /* Detail view cleanup to match i18n */
+  .gp-detail-header {
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 16px;
+    margin-bottom: 1.5rem;
+  }
+  .gp-detail-back {
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+  }
+  .gp-detail-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+  }
+  .gp-pg-toggle {
+    border: 2px solid var(--border);
+    border-radius: 50px;
+  }
+  .gp-viz {
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+  }
+  .gp-detail-extra {
+    border-top: 2px solid var(--border);
+  }
+  .gp-graph-btn {
+    border: 2px solid var(--border);
+    border-radius: 8px;
+  }
+  .gp-time-btn {
+    border: 2px solid var(--border);
+    border-radius: 50px;
+  }
+
+  /* Detail view side ad */
+  .gp-detail-ad {
+    display: none;
+    position: fixed;
+    right: 40px;
+    /* Top-anchored, not vertically centred: centring pushes the top of the box
+       behind the sticky header on a short window. */
+    top: 96px;
+    bottom: auto;
+    /* Sized to the 160x300 unit it holds, so there is no empty margin. */
+    width: 200px;
+    max-height: calc(100vh - 116px);
+    background: var(--ad-bg, #0a0a0a);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    z-index: 50;
+  }
+  .gp-detail-ad .ad-label {
+    font-size: 0.65rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+    padding: 8px 0;
+  }
+  .gp-detail-ad .ad-slot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    color: var(--text3);
+    font-size: 0.8rem;
+  }
+  .gp-detail-ad { display: none !important; }
+  #global-page.gp-in-detail .gp-detail-ad { display: none !important; }
+  @media (min-width: 1200px) {
+    #global-page.gp-in-detail .gp-detail-ad { display: block !important; }
+    /* 200px box + 40px right offset + breathing room — must clear the fixed ad. */
+    #global-page.gp-in-detail { padding-right: 270px; }
+  }
+  @media (max-width: 1199px) {
+    #global-page.gp-in-detail { display: block !important; }
+  }
+
+  /* In-grid ad cards */
+  .gp-card-ad {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 120px;
+    cursor: default;
+    overflow: visible;
+  }
+  .gp-card-ad .ad-label {
+    font-size: 0.65rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+    padding-top: 12px;
+  }
+  .gp-card-ad .ad-slot {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text3);
+    font-size: 0.8rem;
+  }
+
+  /* Page Header */
+  .gp-header {
+    text-align: center;
+    margin-bottom: 1rem;
+    margin-top: 0.25rem;
+  }
+  .gp-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+  .gp-puzzle {
+    color: var(--primary);
+    font-weight: 700;
+  }
+
+  /* Controls Bar */
+  .gp-controls {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 50px;
+    padding: 10px 20px;
+    box-shadow: 0 4px 24px -6px rgba(0, 0, 0, 0.1);
+    margin: 0 auto 1.5rem;
+    max-width: 800px;
+  }
+  .gp-pg-toggle button, .gp-time-filter button {
+    font-weight: 600;
+    border-radius: 50px;
+  }
+  .gp-country-select {
+    font-weight: 800;
+    font-size: 0.8rem;
+    font-family: var(--font-ui);
+    letter-spacing: 0.5px;
+    border-radius: 50px;
+    border: 2px solid var(--border);
+    background: var(--surface2, var(--surface));
+    color: var(--text3);
+    padding: 7px 20px;
+    box-sizing: border-box;
+    text-align: center;
+    text-align-last: center;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: none !important;
+    cursor: pointer;
+    flex-shrink: 0;
+    overflow: visible;
+    min-width: 160px;
+  }
+
+  /* Cards */
+  .gp-card {
+    border-radius: 16px;
+    border: 2px solid var(--border);
+    box-shadow: 0 4px 24px -6px rgba(0, 0, 0, 0.1);
+    background: var(--surface);
+    padding: 0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .gp-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.15);
+  }
+  .gp-card-header {
+    border-bottom: 2px solid var(--border);
+    padding: 1rem 1.5rem;
+    margin-bottom: 0;
+  }
+  .gp-card-header h3 {
+    font-weight: 800;
+    font-size: 0.95rem;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--text);
+  }
+  .gp-card-body {
+    padding: 1.5rem;
+  }
+
+  /* Big Numbers */
+  .gp-big-num {
+    font-weight: 800;
+    font-size: 2.5rem;
+    letter-spacing: -1px;
+  }
+  .gp-big-label {
+    font-weight: 600;
+    color: var(--text2);
+    font-size: 0.85rem;
+    margin-top: 4px;
+  }
+  .gp-big-sub {
+    color: var(--text3);
+    font-size: 0.75rem;
+    margin-top: 4px;
+  }
+
+  /* Mini rows */
+  .gp-mini-row {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .gp-mini-row:last-child {
+    border-bottom: none;
+  }
+  .gp-mini-label {
+    font-weight: 500;
+    color: var(--text2);
+  }
+  .gp-mini-val {
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  /* Map improvements */
+  .gp-world-map-container {
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    background: var(--bg);
+  }
+</style>
+<script>var SHOW_ADS = true;</script>
+</head>
+<body>
+<script>(function(){try{var p=JSON.parse(localStorage.getItem('wi_prefs'))||{};document.body.setAttribute('data-theme',p.theme||'dark');document.body.setAttribute('data-scheme',p.scheme!=null?p.scheme:0);if(p.bgTheme)document.body.setAttribute('data-bg-theme',p.bgTheme);if(p.schemeBtn){var s=document.createElement('style');s.textContent='#btn-scheme{display:flex !important}';document.head.appendChild(s);}}catch(e){document.body.setAttribute('data-theme','dark');document.body.setAttribute('data-scheme','0');}})();</script>
+<!--<script>if(localStorage.getItem('wi_dev')!=='1')window.location.href='index.html';</script>-->
+
+<header>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button id="btn-menu" style="background:var(--surface);border:2px solid var(--border);color:var(--text2);width:34px;height:34px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;margin-left:-8px;" title="Menu"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+    <a href="index.html" class="logo" style="text-decoration:none;"><span class="dot-i">i<span class="dot-circle"></span></span>nven<span class="tle">tle</span> <span class="logo-stats-text">Stats</span></a>
+  </div>
+  <div class="hdr-btns" style="display:flex;align-items:center;">
+    <a href="index.html" style="text-decoration:none;display:inline-flex;">
+      <button style="display:inline-flex;align-items:center;background:var(--right);color:#fff;border:none;border-radius:8px;padding:0 16px;font-weight:700;font-size:0.85rem;letter-spacing:0.5px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.1);width:auto !important;line-height:1;" onmouseover="this.style.transform='translateY(-1px)';this.style.filter='brightness(1.1)';" onmouseout="this.style.transform='none';this.style.filter='none';">Play Inventle</button>
+    </a>
+    <button id="btn-scheme" title="Change Colors" style="display:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12" r="2.5"/><path d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10c1.38 0 2.5-1.12 2.5-2.5 0-.61-.23-1.21-.64-1.67A1.37 1.37 0 0113.5 17c.75 0 1.37-.56 1.48-1.29C18.07 14.94 22 11.07 22 6c0-2.21-4.49-4-10-4z"/></svg></button>
+    <button id="btn-sound" title="Sound"></button>
+    <button id="btn-settings" title="Settings"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1.08-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1.08 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33h.08a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v.08a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>
+  </div>
+</header>
+
+
+<div id="global-page">
+  <!-- ====== MAIN GRID VIEW ====== -->
+  <div class="gp-header">
+    <div class="gp-title">Global Stats</div>
+    <div class="gp-puzzle" id="gp-puzzle-name"></div>
+    <div class="gp-date" id="gp-puzzle-info"></div>
+    <button class="gp-back" id="gp-back">&#8592; Back to Game</button>
+  </div>
+
+  <!-- Global controls bar -->
+  <div class="gp-controls" id="gp-controls">
+    <div class="gp-pg-toggle" id="gp-main-pg">
+      <button class="gp-pg-btn active" data-mode="G">Global</button>
+      <button class="gp-pg-btn" data-mode="P">Personal</button>
+    </div>
+    <select id="gp-country-select" class="gp-country-select">
+      <option value="">All Countries</option>
+    </select>
+    <div class="gp-time-filter" id="gp-main-time" style="margin-bottom:0;">
+      <button class="gp-time-btn" data-range="1D">1D</button>
+      <button class="gp-time-btn" data-range="1W">1W</button>
+      <button class="gp-time-btn" data-range="1M">1M</button>
+      <button class="gp-time-btn" data-range="3M">3M</button>
+      <button class="gp-time-btn" data-range="6M">6M</button>
+      <button class="gp-time-btn" data-range="1Y">1Y</button>
+      <button class="gp-time-btn active" data-range="ALL">ALL</button>
+    </div>
+  </div>
+
+  <div class="gp-grid">
+
+    <!-- 1. WORLD MAP (hero, full width) -->
+    <div class="gp-card gp-wide" data-card="worldmap">
+      <div class="gp-card-header"><h3>World Heat Map</h3><span class="gp-card-arrow">&#8594;</span></div>
+      <div class="gp-card-body">
+        <div class="gp-world-map-container" id="gp-map-container">
+          <div class="gp-map-live">
+            <div class="gp-map-live-count gp-pulse" id="gp-map-live-num">0</div>
+            <div class="gp-map-live-label"><span class="gp-live-dot"></span> playing now</div>
+          </div>
+          <div id="jvm-map" style="width:100%;height:100%;"></div>
+          <div class="gp-map-tooltip" id="gp-map-tooltip"></div>
+        </div>
+        <div class="gp-map-legend" id="gp-map-legend">
+          <span><span class="gp-map-legend-dot" style="background:var(--right);"></span> 1000+</span>
+          <span><span class="gp-map-legend-dot" style="background:color-mix(in srgb,var(--right) 50%,var(--surface2));"></span> 200-999</span>
+          <span><span class="gp-map-legend-dot" style="background:color-mix(in srgb,var(--right) 20%,var(--surface2));"></span> 1-199</span>
+          <span><span class="gp-map-legend-dot" style="background:var(--surface2);border:1px solid var(--border);"></span> No data</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOP AD (full width, right after map) -->
+    <div class="gp-card gp-card-ad-static gp-wide" style="position:relative;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:default;">
+      <div style="font-size:0.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;position:absolute;top:8px;left:50%;transform:translateX(-50%);">Advertisement</div>
+      <div style="width:100%;min-height:90px;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:0.8rem;"><!-- AdSense slot --></div>
+    </div>
+
+    <!-- 2. LIVE PLAYERS -->
+    <div class="gp-card" data-card="liveplayers">
+      <div class="gp-card-header"><h3><span class="gp-live-dot"></span> Live Players</h3><span class="gp-card-arrow">&#8594;</span></div>
+      <div class="gp-card-body" style="text-align:center;">
+        <div class="gp-big-num gp-pulse" id="gp-live-count">0</div>
+        <div class="gp-big-label">playing now</div>
+        <div class="gp-big-sub" id="gp-live-sub"></div>
+      </div>
+    </div>
+
+    <!-- 3. WIN RATE -->
+    <div class="gp-card" data-card="winrate">
+      <div class="gp-card-header"><h3>Win Rate</h3><span class="gp-card-arrow">&#8594;</span></div>
+      <div class="gp-card-body" style="text-align:center;">
+        <div class="gp-big-num" style="color:var(--right);">0%</div>
+        <div class="gp-big-label">today's win rate</div>
+        <div class="gp-big-sub" id="gp-winrate-sub"></div>
+      </div>
+    </div>
+
+    <!-- 4. GUESS DISTRIBUTION -->
+    <div class="gp-card" data-card="guessdist">
+      <div class="gp-card-header"><h3>Guess Distribution</h3><span class="gp-card-arrow">&#8594;</span></div>
+      <div class="gp-card-body">
+        <div class="gp-mini-bars">
+          <div class="gp-mini-bar" style="height:8%;"></div>
+          <div class="gp-mini-bar" style="height:20%;"></div>
+          <div class="gp-mini-bar" style="height:65%;"></div>
+          <div class="gp-mini-bar" style="height:80%;"></div>
+          <div class="gp-mini-bar" style="height:42%;"></div>
+          <div class="gp-mini-bar" style="height:22%;"></div>
+        </div>
+        <div class="gp-big-sub" style="margin-top:8px;text-align:center;">No data yet</div>
+      </div>
+    </div>
+
+    <!-- 5. BONUS ROUNDS -->
+    <div class="gp-card" data-card="bonus">
+      <div class="gp-card-header"><h3>Bonus Rounds</h3><span class="gp-card-arrow">&#8594;</span></div>
+      <div class="gp-card-body" id="gp-bonus-body">
+        <div id="gp-bonus-stats">
+          <div class="gp-mini-row"><span class="gp-mini-label">Participation</span><span class="gp-mini-val">0%</span></div>
+          <div class="gp-mini-row"><span class="gp-mini-label">Country Win</span><span class="gp-mini-val">0%</span></div>
+          <div class="gp-mini-row"><span class="gp-mini-label">Inventor Win</span><span class="gp-mini-val">0%</span></div>
+        </div>
+        <div id="gp-bonus-spoiler" class="gp-bonus-spoiler" style="display:none;">
+          <div class="gp-bonus-spoiler-msg">Complete bonus rounds to see these stats</div>
+          <button class="gp-bonus-skip-btn" id="gp-bonus-skip">Skip Bonus Rounds</button>
+          <div class="gp-bonus-skip-warn">(This will count as not completing them)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. COUNTRY RANKINGS -->
+    <div class="gp-card" data-card="topcountries">
+      <div class="gp-card-header"><h3>Country Rankings</h3><span class="gp-card-arrow">&#8594;</span></div>
+      <div class="gp-card-body" id="gp-rankings-body"></div>
+    </div>
+
+    <!-- 7. TIME TRENDS -->
+    <div class="gp-card" data-card="timetrends">
+      <div class="gp-card-header"><h3>Time Trends</h3><span class="gp-card-arrow">&#8594;</span></div>
+      <div class="gp-card-body">
+        <svg class="gp-sparkline" viewBox="0 0 200 50" preserveAspectRatio="none">
+          <polygon class="gp-spark-fill" points="0,50 0,38 28,30 57,35 85,22 114,28 142,15 171,20 200,12 200,50"/>
+          <polyline points="0,38 28,30 57,35 85,22 114,28 142,15 171,20 200,12"/>
+        </svg>
+        <div class="gp-big-sub" style="text-align:center;">No data yet</div>
+      </div>
+    </div>
+
+    <!-- 8. FIRST GUESS (LOCKED) -->
+    <div class="gp-card" data-card="firstguess" data-lockable="true">
+      <div class="gp-card-header"><h3>First Guess</h3><span class="gp-card-arrow">&#8594;</span></div>
+      <div class="gp-card-body" style="text-align:center;">
+        <div class="gp-big-num">--</div>
+        <div class="gp-big-label">most popular first guess</div>
+        <div class="gp-big-sub">No data yet</div>
+      </div>
+      <div class="gp-lock-overlay">
+        <div class="gp-lock-msg">Complete today's puzzle first</div>
+        <button class="gp-lock-btn" onclick="hideGlobalPage()">Play Now</button>
+      </div>
+    </div>
+
+    <!-- 9. STREAKS -->
+    <div class="gp-card" data-card="streaks">
+      <div class="gp-card-header"><h3>Streaks</h3><span class="gp-card-arrow">&#8594;</span></div>
+      <div class="gp-card-body">
+        <div class="gp-mini-row"><span class="gp-mini-label">Avg Streak</span><span class="gp-mini-val">--</span></div>
+        <div class="gp-mini-row"><span class="gp-mini-label">Longest Today</span><span class="gp-mini-val">--</span></div>
+        <div class="gp-mini-row"><span class="gp-mini-label">Active Streaks</span><span class="gp-mini-val">0%</span></div>
+      </div>
+    </div>
+
+    <!-- 10. DEMOGRAPHICS -->
+    <div class="gp-card" data-card="demographics">
+      <div class="gp-card-header"><h3>Demographics</h3><span class="gp-card-arrow">&#8594;</span></div>
+      <div class="gp-card-body">
+        <div class="gp-demo-split">
+          <span class="gp-demo-bar-label">Mobile</span>
+          <div class="gp-demo-bar-track"><div class="gp-demo-bar-fill" style="width:0%;"></div></div>
+          <span class="gp-demo-bar-pct">0%</span>
+        </div>
+        <div class="gp-demo-split">
+          <span class="gp-demo-bar-label">Desktop</span>
+          <div class="gp-demo-bar-track"><div class="gp-demo-bar-fill" style="width:0%;"></div></div>
+          <span class="gp-demo-bar-pct">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11. HARDEST PUZZLES (LOCKED) -->
+    <div class="gp-card" data-card="hardest" data-lockable="true">
+      <div class="gp-card-header"><h3>Hardest Puzzles</h3><span class="gp-card-arrow">&#8594;</span></div>
+      <div class="gp-card-body">
+        <div class="gp-mini-row" id="gp-hardest-top"><span class="gp-mini-label">#1 --</span><span class="gp-mini-val">-- avg</span></div>
+        <div class="gp-big-sub" style="margin-top:6px;" id="gp-hardest-sub"></div>
+      </div>
+      <div class="gp-lock-overlay">
+        <div class="gp-lock-msg">Complete today's puzzle first</div>
+        <button class="gp-lock-btn" onclick="hideGlobalPage()">Play Now</button>
+      </div>
+    </div>
+
+    <!-- 12. INPUT METHODS -->
+    <div class="gp-card" data-card="inputmethods">
+      <div class="gp-card-header"><h3>Input Methods</h3><span class="gp-card-arrow">&#8594;</span></div>
+      <div class="gp-card-body">
+        <div class="gp-demo-split">
+          <span class="gp-demo-bar-label">Numpad</span>
+          <div class="gp-demo-bar-track"><div class="gp-demo-bar-fill" style="width:56%;"></div></div>
+          <span class="gp-demo-bar-pct">56%</span>
+        </div>
+        <div class="gp-demo-split">
+          <span class="gp-demo-bar-label">Keyboard</span>
+          <div class="gp-demo-bar-track"><div class="gp-demo-bar-fill" style="width:36%;"></div></div>
+          <span class="gp-demo-bar-pct">36%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 13. SOLVE TIME -->
+    <div class="gp-card" data-card="solvetime">
+      <div class="gp-card-header"><h3>Solve Time</h3><span class="gp-card-arrow">&#8594;</span></div>
+      <div class="gp-card-body" style="text-align:center;">
+        <div class="gp-big-num" style="color:var(--near);">--</div>
+        <div class="gp-big-label">avg solve time</div>
+        <div class="gp-big-sub">No data yet</div>
+      </div>
+    </div>
+
+    <!-- 14. PLAY TIMES -->
+    <div class="gp-card" data-card="playtimes">
+      <div class="gp-card-header"><h3>Play Times</h3><span class="gp-card-arrow">&#8594;</span></div>
+      <div class="gp-card-body">
+        <div class="gp-mini-bars" id="gp-playtime-bars">
+          <div class="gp-mini-bar" style="height:0%;"></div>
+          <div class="gp-mini-bar" style="height:15%;"></div>
+          <div class="gp-mini-bar" style="height:60%;"></div>
+          <div class="gp-mini-bar" style="height:85%;"></div>
+          <div class="gp-mini-bar" style="height:95%;"></div>
+          <div class="gp-mini-bar" style="height:40%;"></div>
+        </div>
+        <div class="gp-big-sub" style="margin-top:8px;text-align:center;">No data yet</div>
+      </div>
+    </div>
+
+    <!-- 15. SHARE RATE -->
+    <div class="gp-card" data-card="sharerate">
+      <div class="gp-card-header"><h3>Share Rate</h3><span class="gp-card-arrow">&#8594;</span></div>
+      <div class="gp-card-body" style="text-align:center;">
+        <div class="gp-big-num" style="color:var(--right);">0%</div>
+        <div class="gp-big-label">share their results</div>
+        <div class="gp-big-sub">No data yet</div>
+      </div>
+    </div>
+
+    <!-- 16. BC GUESSES -->
+    <div class="gp-card" data-card="bcguesses">
+      <div class="gp-card-header"><h3>BC Guesses</h3><span class="gp-card-arrow">&#8594;</span></div>
+      <div class="gp-card-body">
+        <div class="gp-mini-row"><span class="gp-mini-label">Tried BC</span><span class="gp-mini-val">0%</span></div>
+        <div class="gp-mini-row"><span class="gp-mini-label">BC as First Guess</span><span class="gp-mini-val">0%</span></div>
+        <div class="gp-mini-row"><span class="gp-mini-label">Win Rate Impact</span><span class="gp-mini-val" style="color:var(--wrong);">-4%</span></div>
+      </div>
+    </div>
+
+    <!-- 17. COLOR SCHEMES -->
+    <div class="gp-card" data-card="colorscheme">
+      <div class="gp-card-header"><h3>Color Schemes</h3><span class="gp-card-arrow">&#8594;</span></div>
+      <div class="gp-card-body">
+        <div class="gp-scheme-preview">
+          <div class="gp-scheme-bar-track" id="gp-scheme-bars">
+            <div class="gp-scheme-bar-seg" style="width:0%;background:#4eca85;"></div>
+            <div class="gp-scheme-bar-seg" style="width:0%;background:#4a8cd8;"></div>
+            <div class="gp-scheme-bar-seg" style="width:0%;background:#42b5c5;"></div>
+            <div class="gp-scheme-bar-seg" style="width:0%;background:#8670d8;"></div>
+          </div>
+          <div class="gp-scheme-labels" id="gp-scheme-labels">
+            <span style="color:#4eca85;">--</span>
+            <span style="color:#4a8cd8;">--</span>
+            <span style="color:#42b5c5;">--</span>
+            <span style="color:#8670d8;">--</span>
+          </div>
+        </div>
+        <div class="gp-big-sub" style="text-align:center;margin-top:8px;" id="gp-scheme-sub"></div>
+      </div>
+    </div>
+
+    <!-- 18. UNFINISHED GAMES -->
+    <div class="gp-card" data-card="unfinished">
+      <div class="gp-card-header"><h3>Unfinished Games</h3><span class="gp-card-arrow">&#8594;</span></div>
+      <div class="gp-card-body">
+        <div class="gp-big-num" id="gp-unfinished-num">--</div>
+        <div class="gp-big-label">gave up mid-game</div>
+        <div class="gp-big-sub" id="gp-unfinished-sub">No data yet</div>
+      </div>
+    </div>
+
+    <!-- 19. COMING SOON -->
+    <div class="gp-card" style="opacity:0.5;cursor:default;">
+      <div class="gp-card-header"><h3>Coming Soon</h3></div>
+      <div class="gp-card-body" style="text-align:center;color:var(--text3);">
+        <div style="font-size:0.85rem;">More stats on the way</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ====== DETAIL VIEW (shown when a card is clicked) ====== -->
+  <div class="gp-detail-view" id="gp-detail-view"></div>
+  <div class="gp-detail-ad" id="gp-detail-ad">
+    <div class="ad-label">Advertisement</div>
+    <div class="ad-slot" style="text-align:center;">
+      <!-- Adsterra 160x300 -->
+      <script type="text/javascript">
+        atOptions = { 'key' : '0f45dabb0671155219e0207c53d4df60', 'format' : 'iframe', 'height' : 300, 'width' : 160, 'params' : {} };
+      </script>
+      <script type="text/javascript" src="https://www.highperformanceformat.com/0f45dabb0671155219e0207c53d4df60/invoke.js"></script>
+    </div>
+  </div>
+
+  <div style="text-align:center;font-size:0.8rem;color:var(--text3);margin-top:16px;" id="gp-privacy-footer">
+    <a href="#" id="privacy-link" style="color:var(--text3);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;transition:color 0.2s;">All data is fully anonymous. No IP addresses or personal information are ever stored.</a>
+  </div>
+
+  <!-- Privacy Explainer Modal -->
+  <div class="modal-bg" id="m-privacy-explain" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center;padding:20px;">
+    <div class="modal" style="max-width:520px;width:100%;max-height:85vh;overflow-y:auto;border-radius:20px;border:2px solid var(--border);background:var(--surface);padding:2rem;box-shadow:0 20px 40px -10px rgba(0,0,0,0.3);position:relative;">
+      <button id="x-privacy-explain" style="position:absolute;top:1rem;right:1rem;background:var(--surface-hover);border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:var(--text2);cursor:pointer;font-size:1.2rem;transition:all 0.2s;">&times;</button>
+      <h2 style="font-weight:800;letter-spacing:-0.5px;margin-bottom:1.5rem;color:var(--text);">How We Collect Stats</h2>
+
+      <div style="line-height:1.7;color:var(--text2);font-size:0.9rem;">
+        <p style="margin-bottom:16px;">You might be wondering: <strong style="color:var(--text);">if you don't track us, how do you have all this data?</strong> Great question.</p>
+
+        <h3 style="color:var(--text);font-weight:700;font-size:0.95rem;margin-bottom:8px;">What happens when you play</h3>
+        <p style="margin-bottom:16px;">When you finish a puzzle, your browser sends a small summary to our server: how many guesses it took, whether you got the bonus rounds, and what time of day it was. That's it. Think of it like dropping an anonymous survey into a box — we see the answers, but we have no idea who wrote them.</p>
+
+        <h3 style="color:var(--text);font-weight:700;font-size:0.95rem;margin-bottom:8px;">How country data works</h3>
+        <p style="margin-bottom:16px;">For the world map, we need to know roughly where players are. When your stats are sent, a third-party service looks up your IP address and tells us just the <strong style="color:var(--text);">country</strong> — like "France" or "Japan." Your actual IP address is <strong style="color:var(--text);">never saved</strong> anywhere. It's used once in transit and immediately discarded. We couldn't identify you even if we wanted to.</p>
+
+        <h3 style="color:var(--text);font-weight:700;font-size:0.95rem;margin-bottom:8px;">What we never do</h3>
+        <ul style="margin-bottom:16px;padding-left:20px;">
+          <li style="margin-bottom:6px;">We <strong style="color:var(--text);">never</strong> store IP addresses</li>
+          <li style="margin-bottom:6px;">We <strong style="color:var(--text);">never</strong> use cookies to track you</li>
+          <li style="margin-bottom:6px;">We <strong style="color:var(--text);">never</strong> collect names, emails, or accounts</li>
+          <li style="margin-bottom:6px;">We <strong style="color:var(--text);">never</strong> fingerprint your device or track you across sessions</li>
+          <li style="margin-bottom:6px;">We <strong style="color:var(--text);">can't</strong> link any data point back to any person</li>
+        </ul>
+
+        <h3 style="color:var(--text);font-weight:700;font-size:0.95rem;margin-bottom:8px;">Your local stats</h3>
+        <p style="margin-bottom:16px;">Your personal win streaks, guess history, and preferences? Those live entirely on <strong style="color:var(--text);">your device</strong> in your browser's local storage. They never leave your computer. If you clear your browser data, they're gone — we have no backup because we never had them in the first place.</p>
+
+        <p style="color:var(--text3);font-size:0.85rem;border-top:2px solid var(--border);padding-top:12px;margin-top:8px;">Questions? <strong style="color:var(--text);">inventle.game@gmail.com</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    var link=document.getElementById('privacy-link');
+    var modal=document.getElementById('m-privacy-explain');
+    var close=document.getElementById('x-privacy-explain');
+    link.onclick=function(e){e.preventDefault();modal.style.display='flex';};
+    close.onclick=function(){modal.style.display='none';};
+    modal.onclick=function(e){if(e.target===modal)modal.style.display='none';};
+    document.addEventListener('keydown',function(e){if(e.key==='Escape'&&modal.style.display==='flex')modal.style.display='none';});
+  })();
+  </script>
+
+</div>
+
+<!-- Slide-out Nav Menu -->
+<div id="nav-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:998;transition:opacity 0.3s;opacity:0;"></div>
+<nav id="nav-menu" style="position:fixed;top:0;left:0;transform:translateX(-100%);width:280px;height:100%;background:var(--surface);border-right:3px solid var(--border);box-shadow:4px 0 24px rgba(0,0,0,0.1);z-index:999;transition:transform 0.25s cubic-bezier(0.16,1,0.3,1);overflow-y:auto;display:flex;flex-direction:column;will-change:transform;">
+  <div style="padding:1.5rem;border-bottom:3px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+    <a href="index.html" class="logo" style="font-size:1.65rem;letter-spacing:-0.5px;text-decoration:none;"><span class="dot-i">i<span class="dot-circle"></span></span>nven<span class="tle">tle</span></a>
+    <button id="nav-close" style="position:static;width:36px;height:36px;background:var(--surface-hover);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text2);cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='var(--border)';this.style.color='var(--text)';this.style.transform='rotate(90deg) scale(1.1)';" onmouseout="this.style.background='var(--surface-hover)';this.style.color='var(--text2)';this.style.transform='none';">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+  </div>
+  <div style="padding:1rem 0;flex:1;">
+    <a href="index.html" class="nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span data-i18n="nav.dailyPuzzle">Daily Puzzle</span>
+    </a>
+    <a href="infinite.html" class="nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.178 8c5.096 0 5.096 8 0 8-5.095 0-7.133-8-12.739-8-4.585 0-4.585 8 0 8 5.606 0 7.644-8 12.739-8z"/></svg>
+      <span data-i18n="nav.infiniteMode">Infinite Mode</span>
+    </a>
+    <a href="stats.html" class="nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+      <span data-i18n="nav.globalStats">Global Stats</span>
+    </a>
+    <div style="height:2px;background:var(--border);margin:12px 20px;border-radius:1px;"></div>
+    <a href="about.html" class="nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      <span data-i18n="nav.about">About</span>
+    </a>
+    <a href="how-to-play.html" class="nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span data-i18n="help.title">How to Play</span>
+    </a>
+    <a href="/inventions/" class="nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+      <span data-i18n="nav.browseInventions">Browse Inventions</span>
+    </a>
+    <a href="privacy.html" class="nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      <span data-i18n="privacy.title">Privacy Policy</span>
+    </a>
+    <a href="terms.html" class="nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <span data-i18n="nav.termsOfService">Terms of Service</span>
+    </a>
+    <a href="contact.html" class="nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <span data-i18n="contact.title">Contact</span>
+    </a>
+  </div>
+  <div style="padding:1.5rem;border-top:3px solid var(--border);display:flex;flex-direction:column;gap:12px;">
+    <a href="https://ko-fi.com/blakeypooh" target="_blank" rel="noopener" class="nav-footer-link">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 010 8h-1"/><path d="M3 8h14v9a4 4 0 01-4 4H7a4 4 0 01-4-4V8z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>
+      <span data-i18n="settings.support">Support</span>
+    </a>
+    <a href="https://github.com/ITakeCake" target="_blank" rel="noopener" class="nav-footer-link">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      <span data-i18n="nav.github">GitHub</span>
+    </a>
+  </div>
+</nav>
+
+<style>
+    header .logo { transition: transform 0.2s, filter 0.2s; }
+    header .logo:hover { transform: scale(1.05); filter: brightness(1.1); opacity: 1; }
+    #btn-menu:hover { background: var(--surface-hover) !important; color: var(--text) !important; border-color: var(--text3) !important; }
+    #nav-menu .logo { transition: transform 0.2s, filter 0.2s; }
+    #nav-menu .logo:hover { transform: scale(1.05); filter: brightness(1.1); opacity: 1; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    margin: 4px 12px;
+    color: var(--text2);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-radius: 12px;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .nav-item:hover {
+    background: var(--surface-hover);
+    color: var(--text);
+  }
+  @media (hover: hover) { .nav-item:hover { transform: translateX(4px); } }
+  .nav-item svg {
+    color: var(--text3);
+    transition: color 0.2s;
+    flex-shrink: 0;
+  }
+  .nav-item:hover svg {
+    color: var(--primary);
+  }
+  
+  .nav-footer-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text3);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+  .nav-footer-link:hover {
+    color: var(--text);
+  }
+
+  #nav-menu.open { left: 0; }
+  #nav-overlay.open { display: block !important; opacity: 1; }
+</style>
+
+<script>
+(function(){
+  var menu=document.getElementById('nav-menu');
+  var overlay=document.getElementById('nav-overlay');
+  var btnOpen=document.getElementById('btn-menu');
+  var btnClose=document.getElementById('nav-close');
+
+  function openMenu(){menu.style.transform='translateX(0)';overlay.style.display='block';setTimeout(function(){overlay.style.opacity='1';},10);}
+  function closeMenu(){menu.style.transform='translateX(-100%)';overlay.style.opacity='0';setTimeout(function(){overlay.style.display='none';},300);}
+
+  if(btnOpen) btnOpen.onclick=openMenu;
+  if(btnClose) btnClose.onclick=closeMenu;
+  if(overlay) overlay.onclick=closeMenu;
+
+  // Close on Escape
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&menu.style.transform==='translateX(0)')closeMenu();});
+})();
+</script>
+
+<!-- Settings -->
+<div class="modal-bg" id="m-settings">
+  <div class="modal">
+    <button class="modal-x" id="x-settings">&times;</button>
+    <h2 data-i18n="settings.title">Settings</h2>
+
+    <!-- Language section -->
+    <div class="settings-section">
+      <h3 data-i18n="settings.language">Language</h3>
+      <div class="setting-row">
+        <div>
+          <select id="lang-select" style="background:var(--surface);color:var(--text);border:2px solid var(--border);border-radius:8px;padding:8px 12px;font-size:0.9rem;font-weight:600;width:100%;cursor:pointer;font-family:inherit;">
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+            <option value="it">Italiano</option>
+            <option value="pt">Português</option>
+            <option value="hi">हिंदी</option>
+            <option value="ja">日本語</option>
+            <option value="ko">한국어</option>
+            <option value="zh">中文</option>
+            <option value="pl">Polski</option>
+            <option value="uk">Українська</option>
+            <option value="nb">Norsk Bokmål</option>
+            <option value="sv">Svenska</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <h3 data-i18n="settings.appearance">Appearance</h3>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label" data-i18n="settings.darkMode">Dark Mode</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="set-dark"><span class="slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label" data-i18n="settings.colorScheme">Color Scheme</div>
+        </div>
+        <div class="scheme-btns" id="scheme-btns">
+          <button class="scheme-btn" data-scheme="0" data-i18n="settings.default">Default</button>
+          <button class="scheme-btn" data-scheme="1">Deut</button>
+          <button class="scheme-btn" data-scheme="2">Trit</button>
+          <button class="scheme-btn" data-scheme="3">Prot</button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label" data-i18n="settings.colorBlindBtn">Color Blind Button</div>
+          <div class="setting-sub" data-i18n="settings.colorBlindSub">Show color scheme toggle in header</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="set-scheme-btn"><span class="slider"></span></label>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <h3 data-i18n="settings.animations">Animations</h3>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label" data-i18n="settings.spinAnimation">Spin Animation</div>
+          <div class="setting-sub" data-i18n="settings.spinSub">Digit reel effect on guesses</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="set-spin"><span class="slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label" data-i18n="settings.goldGlow">Gold Glow</div>
+          <div class="setting-sub" data-i18n="settings.goldGlowSub">Glow effect on correct digits</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="set-glow"><span class="slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label" data-i18n="settings.soundEffects">Sound Effects</div>
+          <div class="setting-sub" data-i18n="settings.soundEffectsSub">Clicks and game sounds</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="set-sound"><span class="slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label" data-i18n="settings.rainbowInfinite">Rainbow Infinite</div>
+          <div class="setting-sub" data-i18n="settings.rainbowSub">Animated rainbow text on Infinite mode</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="set-rainbow"><span class="slider"></span></label>
+      </div>
+    </div>
+
+
+    <div class="settings-footer">
+      <a href="privacy.html" style="color:var(--text3);font-size:0.85rem;text-decoration:none;display:block;margin-bottom:8px;transition:color 0.2s;" data-i18n="settings.privacyPolicy">Privacy Policy</a>
+      <a href="contact.html" style="color:var(--text3);font-size:0.85rem;text-decoration:none;display:block;margin-bottom:8px;transition:color 0.2s;" data-i18n="settings.contact">Contact</a>
+      <div style="display:flex;gap:20px;justify-content:center;align-items:center;">
+        <a href="https://ko-fi.com/blakeypooh" target="_blank" rel="noopener" style="color:var(--text3);font-size:0.85rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:color 0.2s;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 010 8h-1"/><path d="M3 8h14v9a4 4 0 01-4 4H7a4 4 0 01-4-4V8z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg><span data-i18n="settings.support">Support</span></a>
+        <a href="https://github.com/ITakeCake" target="_blank" rel="noopener" style="color:var(--text3);font-size:0.85rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:color 0.2s;"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    function saveP(p) { try { localStorage.setItem('wi_prefs', JSON.stringify(p)); } catch(e){} }
+    function loadP() { try { return JSON.parse(localStorage.getItem('wi_prefs')) || {}; } catch(e){ return {}; } }
+
+    function setupModal(btnId, modalId, closeId) {
+      var btn = document.getElementById(btnId);
+      var mod = document.getElementById(modalId);
+      var cls = document.getElementById(closeId);
+      if (!btn || !mod || !cls) return;
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        // Load current prefs on open for settings
+        if(modalId === 'm-settings') {
+          var p = loadP();
+          var dk = document.getElementById('set-dark');
+          if(dk) dk.checked = (p.theme || 'dark') === 'dark';
+          var sp = document.getElementById('set-spin');
+          if(sp) sp.checked = p.spin !== false;
+          var gl = document.getElementById('set-glow');
+          if(gl) gl.checked = p.glow !== false;
+          var sBtn = document.getElementById('set-scheme-btn');
+          if(sBtn) sBtn.checked = p.schemeBtn === true;
+          var snd = document.getElementById('set-sound');
+          if(snd) snd.checked = p.sound !== false;
+
+          document.querySelectorAll('#scheme-btns .scheme-btn').forEach(function(b) {
+            b.classList.toggle('active', parseInt(b.getAttribute('data-scheme')) === (p.scheme || 0));
+          });
+          document.querySelectorAll('#bg-theme-btns .scheme-btn').forEach(function(b) {
+            b.classList.toggle('active', b.getAttribute('data-bg-theme') === (p.bgTheme || ''));
+          });
+          var langSel = document.getElementById('lang-select');
+          if(langSel && window.I18N) langSel.value = I18N.getLang();
+        }
+        mod.classList.add('show');
+      });
+      cls.addEventListener('click', function() { mod.classList.remove('show'); });
+      mod.addEventListener('click', function(e) { if(e.target === mod) mod.classList.remove('show'); });
+    }
+    setupModal('btn-settings', 'm-settings', 'x-settings');
+
+    document.addEventListener('keydown', function(e) {
+      if(e.key === 'Escape') {
+        var modals = document.querySelectorAll('.modal-bg');
+        modals.forEach(function(m) { m.classList.remove('show'); });
+      }
+    });
+
+    var darkToggle = document.getElementById('set-dark');
+    if(darkToggle) {
+      darkToggle.onchange = function() {
+        var theme = this.checked ? 'dark' : 'light';
+        document.body.setAttribute('data-theme', theme);
+        var p = loadP(); p.theme = theme; saveP(p);
+      };
+    }
+    
+    // Header sound button + the Sound Effects switch. The switch had NO handler on this
+    // page at all — it rendered and did nothing. Same pref as everywhere else.
+    var SND_ICON_ON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 010 14.14"/><path d="M15.54 8.46a5 5 0 010 7.07"/></svg>';
+    var SND_ICON_OFF = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>';
+    function syncSoundBtn() {
+      var b = document.getElementById('btn-sound');
+      if (!b) return;
+      var on = loadP().sound !== false;
+      b.innerHTML = on ? SND_ICON_ON : SND_ICON_OFF;
+      b.title = on ? 'Mute sound' : 'Unmute sound';
+      b.setAttribute('aria-label', b.title);
+      b.setAttribute('aria-pressed', on ? 'false' : 'true');
+      b.classList.toggle('muted', !on);
+      var t = document.getElementById('set-sound');
+      if (t) t.checked = on;
+    }
+    var soundBtn = document.getElementById('btn-sound');
+    if (soundBtn) soundBtn.onclick = function() {
+      var p = loadP(); p.sound = (p.sound === false); saveP(p); syncSoundBtn();
+    };
+    var sndSwitch = document.getElementById('set-sound');
+    if (sndSwitch) sndSwitch.onchange = function() {
+      var p = loadP(); p.sound = this.checked; saveP(p); syncSoundBtn();
+    };
+    syncSoundBtn();
+
+    var spinToggle = document.getElementById('set-spin');
+    if(spinToggle) {
+      spinToggle.onchange = function() { var p = loadP(); p.spin = this.checked; saveP(p); };
+    }
+    
+    var glowToggle = document.getElementById('set-glow');
+    if(glowToggle) {
+      glowToggle.onchange = function() { var p = loadP(); p.glow = this.checked; saveP(p); };
+    }
+    
+    var schemeBtnToggle = document.getElementById('set-scheme-btn');
+    if(schemeBtnToggle) {
+      schemeBtnToggle.onchange = function() {
+        var p = loadP(); p.schemeBtn = this.checked; saveP(p);
+        var sb = document.getElementById('btn-scheme');
+        if (sb) sb.style.display = this.checked ? '' : 'none';
+      };
+    }
+
+    var _schemeAnimating = false;
+    function animatedSetScheme(s) {
+      if (_schemeAnimating) { document.body.setAttribute('data-scheme', s); return; }
+      _schemeAnimating = true;
+      document.body.classList.add('scheme-animating');
+      document.body.setAttribute('data-scheme', s);
+      setTimeout(function() {
+        document.body.classList.remove('scheme-animating');
+        _schemeAnimating = false;
+      }, 2000);
+    }
+
+    var btnScheme = document.getElementById('btn-scheme');
+    if (btnScheme) {
+      btnScheme.onclick = function() {
+        var p = loadP(); var s = ((p.scheme != null ? p.scheme : 0) + 1) % 4;
+        animatedSetScheme(s);
+        p.scheme = s; saveP(p);
+        document.querySelectorAll('#scheme-btns .scheme-btn').forEach(function(x){
+          x.classList.toggle('active', parseInt(x.getAttribute('data-scheme')) === s);
+        });
+      };
+    }
+
+    document.querySelectorAll('#scheme-btns .scheme-btn').forEach(function(b) {
+      b.onclick = function() {
+        var s = parseInt(this.getAttribute('data-scheme'));
+        animatedSetScheme(s);
+        var p = loadP(); p.scheme = s; saveP(p);
+        document.querySelectorAll('#scheme-btns .scheme-btn').forEach(function(x){x.classList.remove('active');});
+        this.classList.add('active');
+      };
+    });
+
+    document.querySelectorAll('#bg-theme-btns .scheme-btn').forEach(function(b) {
+      b.onclick = function() {
+        var t = this.getAttribute('data-bg-theme');
+        if (t) document.body.setAttribute('data-bg-theme', t);
+        else document.body.removeAttribute('data-bg-theme');
+        var p = loadP(); p.bgTheme = t || ''; saveP(p);
+        document.querySelectorAll('#bg-theme-btns .scheme-btn').forEach(function(x){x.classList.remove('active');});
+        this.classList.add('active');
+      };
+    });
+
+    var langSel = document.getElementById('lang-select');
+    if(langSel) {
+      langSel.onchange = function() {
+        if(window.I18N) I18N.setLang(this.value);
+        var p = loadP(); p.lang = this.value; saveP(p);
+      };
+    }
+  })();
+</script>
+
+<!-- Stub game globals so global-stats.js doesn't error -->
+<script src="js/i18n.js?v=b23"></script>
+<script>
+  var over=true,phase='done',b1over=true,b2over=true,b1won=false,b2won=false;
+  var _e=null,_pn=0,_ds='';
+  function recB1(){}function recB2(){}function _trackB1(){}function _trackB2(){}function saveSt(){}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/jsvectormap"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsvectormap/dist/maps/world.js"></script>
+<script src="js/global-stats.js?v=b26"></script>
+<script src="js/sound.js?v=b26"></script>
+<script>
+  // Auto-show the stats page on load
+  (function(){
+    document.body.classList.add('global-view');
+    // Apply saved preferences
+    try{
+      var p = JSON.parse(localStorage.getItem('wi_prefs')) || {};
+      if(p.theme) document.body.setAttribute('data-theme', p.theme);
+      if(p.scheme != null) document.body.setAttribute('data-scheme', p.scheme);
+      if(p.bgTheme) document.body.setAttribute('data-bg-theme', p.bgTheme);
+      else document.body.removeAttribute('data-bg-theme');
+      if(p.schemeBtn) {
+        var sb = document.getElementById('btn-scheme');
+        if(sb) sb.style.display = '';
+      }
+    }catch(e){}
+    gpInitMap();
+    gpUpdateMapMode();
+    gpRenderRankingsCard();
+  })();
+</script>
+<script>
+(function(){
+  if(typeof SHOW_ADS!=='undefined'&&!SHOW_ADS){
+    document.querySelectorAll('.gp-card-ad-static,.gp-detail-ad').forEach(function(el){el.style.display='none';});
+    return;
+  }
+
+  function getGridCols(){
+    var grid=document.querySelector('.gp-grid');
+    if(!grid)return 1;
+    var cols=getComputedStyle(grid).gridTemplateColumns.split(' ').length;
+    return cols;
+  }
+
+  function clearAdCards(){
+    document.querySelectorAll('.gp-card-ad').forEach(function(el){el.remove();});
+  }
+
+  function insertAdCards(){
+    clearAdCards();
+    var grid=document.querySelector('.gp-grid');
+    if(!grid)return;
+    // Only target main grid view, skip if in detail view
+    var gp=document.getElementById('global-page');
+    if(gp&&gp.classList.contains('gp-in-detail'))return;
+
+    var cols=getGridCols();
+    // 3 cols: ad every 3rd row; 2 cols: every 3rd row; 1 col: every 4th row
+    var interval=(cols===1)?4:3;
+    var span=cols;
+
+    // Get all non-ad cards in the grid (skip the full-width map which is row 1)
+    var cards=Array.prototype.slice.call(grid.querySelectorAll('.gp-card:not(.gp-wide):not(.gp-card-ad)'));
+    var positions=[];
+    for(var i=interval*cols;i<=cards.length;i+=interval*cols){
+      positions.push(i);
+    }
+
+    // Insert from bottom up so indices don't shift
+    for(var j=positions.length-1;j>=0;j--){
+      var idx=positions[j];
+      if(idx>cards.length)idx=cards.length;
+      var ad=document.createElement('div');
+      ad.className='gp-card gp-card-ad';
+      ad.style.gridColumn='span '+span;
+      ad.innerHTML='<div class="ad-label">Advertisement</div><div class="ad-slot"><!-- AdSense slot --></div>';
+      // Insert after the card at position idx-1
+      var ref=cards[idx-1];
+      if(ref&&ref.nextSibling){
+        grid.insertBefore(ad,ref.nextSibling);
+      }else{
+        grid.appendChild(ad);
+      }
+    }
+  }
+
+  // Run on load and resize
+  insertAdCards();
+  var resizeTimer;
+  window.addEventListener('resize',function(){
+    clearTimeout(resizeTimer);
+    resizeTimer=setTimeout(insertAdCards,200);
+  });
+})();
+</script>
+</body>
+</html>

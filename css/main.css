@@ -1,0 +1,902 @@
+  /* Fonts loaded via <link rel="preload"> in HTML head for faster startup */
+
+  @property --right { syntax: '<color>'; inherits: true; initial-value: #10b981; }
+  @property --near { syntax: '<color>'; inherits: true; initial-value: #f59e0b; }
+  @property --wrong { syntax: '<color>'; inherits: true; initial-value: #909090; }
+  @property --no { syntax: '<color>'; inherits: true; initial-value: #f87171; }
+  @property --era-ad-c { syntax: '<color>'; inherits: true; initial-value: #10b981; }
+  @property --era-bc-c { syntax: '<color>'; inherits: true; initial-value: #f59e0b; }
+
+  :root {
+    --font-ui: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  /* Color schemes — each defines right/near/wrong + AD/BC colors */
+  /* 0: Green/Gold (default) */
+  [data-scheme="0"] { --right: #10b981; --near: #f59e0b; --wrong: #909090; --era-ad-c: #10b981; --era-bc-c: #f59e0b; }
+  /* 1: Blue/Orange (deuteranopia friendly) */
+  [data-scheme="1"] { --right: #3b82f6; --near: #f97316; --wrong: #909090; --era-ad-c: #3b82f6; --era-bc-c: #f97316; }
+  /* 2: Teal/Rose (tritanopia friendly) */
+  [data-scheme="2"] { --right: #14b8a6; --near: #f43f5e; --wrong: #909090; --era-ad-c: #14b8a6; --era-bc-c: #f43f5e; }
+  /* 3: Purple/Yellow (protanopia friendly) */
+  [data-scheme="3"] { --right: #8b5cf6; --near: #eab308; --wrong: #909090; --era-ad-c: #8b5cf6; --era-bc-c: #eab308; }
+  /* Light mode: derived from dark mode (~8% less lightness) */
+  [data-theme="light"][data-scheme="0"] { --right: #10b981; --near: #f59e0b; --wrong: #808080; --era-ad-c: #10b981; --era-bc-c: #f59e0b; }
+  [data-theme="light"][data-scheme="1"] { --right: #3b82f6; --near: #f97316; --wrong: #808080; --era-ad-c: #3b82f6; --era-bc-c: #f97316; }
+  [data-theme="light"][data-scheme="2"] { --right: #14b8a6; --near: #f43f5e; --wrong: #808080; --era-ad-c: #14b8a6; --era-bc-c: #f43f5e; }
+  [data-theme="light"][data-scheme="3"] { --right: #8b5cf6; --near: #eab308; --wrong: #808080; --era-ad-c: #8b5cf6; --era-bc-c: #eab308; }
+
+  [data-theme="dark"] {
+    --bg: #000000; --surface: #111111; --surface2: #1a1a1a;
+    --border: #333; --text: #f0f0f0; --text2: #999999; --text3: #555555;
+    --input-bg: #151515; --key-bg: #1e1e1e; --key-hover: #2a2a2a;
+    --shadow: rgba(255,255,255,0.03); --overlay: rgba(0,0,0,0.4);
+    --toast-bg: #f0f0f0; --toast-text: #000;
+    --ad-bg: #0a0a0a;
+    --era-ad: var(--era-ad-c); --era-bc: var(--era-bc-c);
+    --no: #f87171;
+  }
+  [data-theme="light"] {
+    --bg: #f7f5f0; --surface: #f1efe9; --surface2: #ebe9e3;
+    --border: #c0c0c0; --text: #111111; --text2: #555555; --text3: #888888;
+    --input-bg: #ffffff; --key-bg: #f0f0f0; --key-hover: #e4e4e4;
+    --shadow: rgba(0,0,0,0.04); --overlay: rgba(0,0,0,0.4);
+    --toast-bg: #111111; --toast-text: #fff;
+    --ad-bg: #fafafa;
+    --era-ad: var(--era-ad-c); --era-bc: var(--era-bc-c);
+    --no: #ef4444;
+  }
+
+
+  html { background: #000; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+button, input, a, label, .np-key, .input-era, .mc-option, .toggle, .scheme-btn,
+.bonus-submit, .continue-btn, .share-btn, .modal-x, .ac-item, .bonus-collapse-header {
+  touch-action: manipulation;
+}
+  #app-root {
+    position: fixed; inset: 0;
+    overflow: hidden;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: var(--font-ui);
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    transition: background 0.4s ease, color 0.3s ease,
+                --right 2s ease, --near 2s ease, --wrong 2s ease,
+                --era-ad-c 2s ease, --era-bc-c 2s ease;
+  }
+  body.no-color-transition {
+    transition: none !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  body.scheme-animating * { transition: none !important; }
+  body.scheme-animating .scheme-btn,
+  body.scheme-animating .life-box,
+  body.scheme-animating .life-box svg,
+  body.scheme-animating .np-key.era-ad,
+  body.scheme-animating .np-key.era-bc,
+  body.scheme-animating .input-era { transition: border-color 2s ease, color 2s ease, background 2s ease, stroke 2s ease !important; }
+
+  /* Tabular nums for aligned digits */
+  .guess-cell, .input-cell, .st-n, .round-counter,
+  .d-row .d-l, .d-row .d-b, .np-key, .streak-count,
+  #countdown, .guess-era-chip {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* HEADER */
+  header {
+    width: 100%; max-width: 480px;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: calc(16px + env(safe-area-inset-top, 0px)) 20px 10px;
+    border-bottom: 1.2px solid var(--border);
+  }
+  .logo { font-size: 1.8rem; font-weight: 900; letter-spacing: -1px; line-height: 1; color: var(--right); display: inline-block; }
+  .logo .tle { color: var(--near); }
+  .logo .dot-i { position: relative; display: inline-block; }
+  .logo .dot-circle { position: absolute; width: 0.19em; height: 0.19em; border-radius: 50%; background: var(--near); top: 0.05em; left: 50%; transform: translateX(-50%); }
+  .hdr-btns { display: flex; gap: 8px; }
+  .hdr-btns button {
+    background: var(--surface); border: 2px solid var(--border); color: var(--text2);
+    width: 34px; height: 34px; border-radius: 8px; cursor: pointer;
+    font-size: 1rem; font-weight: 700; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; line-height: 1;
+  }
+  .hdr-btns button svg { width: 16px; height: 16px; }
+  .hdr-btns button:hover { color: var(--text); border-color: var(--text3); }
+  /* muted sound button: the crossed-out icon carries the meaning, this only softens it */
+  .hdr-btns button#btn-sound.muted { color: var(--text3); }
+  .hdr-btns button#btn-sound.muted:hover { color: var(--text2); }
+  .hdr-btns a button { background: var(--surface); border: 2px solid var(--border); color: var(--text2); }
+  .hdr-btns a button:active { background: var(--surface); border: 2px solid var(--border); opacity: 1; }
+  /* Infinite mode badge */
+  .inf-badge {
+    text-align: center; font-size: 0.7rem; font-weight: 900; letter-spacing: 3px;
+    color: var(--text3); padding: 4px 0 0; font-family: var(--font-ui);
+  }
+  .hdr-btns .lbl { font-size: 0.75rem; font-weight: 800; font-family: var(--font-ui); }
+  /* Settings */
+  .settings-section { margin: 20px 0; }
+  .settings-section h3 {
+    font-size: 0.85rem; color: var(--text3); text-transform: uppercase;
+    letter-spacing: 2px; margin-bottom: 12px; font-weight: 700;
+  }
+  .setting-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 0; border-bottom: 2px solid var(--border);
+  }
+  .setting-row:last-child { border-bottom: none; }
+  .setting-label { font-size: 1rem; font-weight: 700; color: var(--text); }
+  .setting-sub { font-size: 0.9rem; color: var(--text3); margin-top: 2px; }
+  /* Toggle switch */
+  .toggle { position: relative; width: 48px; height: 26px; flex-shrink: 0; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle .slider {
+    position: absolute; inset: 0; background: var(--surface2); border-radius: 26px;
+    cursor: pointer; transition: background 0.3s; border: 2.5px solid var(--border);
+  }
+  .toggle .slider::before {
+    content: ''; position: absolute; width: 18px; height: 18px; left: 3px; bottom: 2px;
+    background: var(--text2); border-radius: 50%; transition: transform 0.3s, background 0.3s;
+  }
+  .toggle input:checked + .slider { background: var(--right); border-color: var(--right); }
+  .toggle input:checked + .slider::before { transform: translateX(22px); background: #000; }
+  /* Scheme picker buttons */
+  .scheme-btns { display: flex; gap: 6px; }
+  .scheme-btn {
+    padding: 6px 12px; border-radius: 6px; border: 2.5px solid var(--border);
+    background: var(--surface); color: var(--text2); font-size: 0.75rem;
+    font-weight: 700; cursor: pointer; font-family: var(--font-ui); transition: all 0.2s;
+  }
+  .scheme-btn.active { border-color: var(--right); color: var(--right); }
+  .settings-footer {
+    text-align: center; margin-top: 18px; padding-top: 14px; border-top: 2px solid var(--border);
+  }
+  .settings-footer a {
+    color: var(--text3); font-size: 0.8rem; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s;
+  }
+  .settings-footer a:hover { color: var(--text); }
+  #m-settings .modal { border-width: 2px; }
+
+  /* MAIN CONTENT */
+  main {
+    width: 100%; max-width: 480px;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 0;
+    flex: 1;
+    overflow: clip;
+    clip-path: none;
+    min-height: 0; /* allow flex child to shrink */
+    animation: pageIn 0.25s ease-out forwards;
+  }
+  /* pageIn keyframe — see css/animations.css */
+
+  /* Scrollable game area above the numpad */
+  .game-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: clip;
+    width: 100%;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 18px 44px 12px;
+    min-height: 0;
+    /* scroll anchoring re-adjusts scrollTop while animated heights change, so it is off */
+    overflow-anchor: none;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  /* A scroller's children must not be flex-squeezed; overflow should scroll instead.
+     Without this, a child with overflow:hidden (the fold animations' clip) loses its
+     min-height:auto floor and flex-shrink crushes it to 0px. */
+  .game-scroll > * { flex-shrink: 0; }
+
+  /* INVENTION CARD */
+  .inv-card {
+    width: 100%; text-align: center;
+    margin-bottom: 12px;
+  }
+  .inv-label {
+    font-size: 0.75rem; color: var(--text2); text-transform: uppercase;
+    letter-spacing: 3px; margin-bottom: 10px; font-weight: 900;
+  }
+  #inv-name {
+    font-size: 1.7rem; font-weight: 900; line-height: 1.2;
+    letter-spacing: -0.8px; margin-bottom: 8px;
+  }
+  .inv-name-sub {
+    font-size: 0.85rem; font-weight: 600; color: var(--text3);
+    letter-spacing: 0; margin-top: 4px;
+  }
+  #puzzle-num {
+    font-size: 0.75rem; color: var(--text2); font-family: var(--font-ui);
+    text-transform: uppercase; letter-spacing: 3px; font-weight: 900; margin: 2px 0;
+  }
+  .round-counter {
+    text-align: center; font-size: 0.75rem; font-family: var(--font-mono);
+    font-weight: 800; color: var(--text3); letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+
+  /* Invention image */
+  .inv-img {
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    border: 2.5px solid var(--border);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 0 40px rgba(96,165,250,0.04);
+    position: relative;
+    background: var(--surface);
+  }
+  .inv-img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    pointer-events: none;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -2px 4px rgba(0,0,0,0.1);
+  }
+  .inv-img img {
+    width: 100%;
+    display: block;
+    aspect-ratio: 16/10;
+    object-fit: cover;
+  }
+  .inv-img:empty { display: none; }
+  [data-theme="light"] .inv-img {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06);
+  }
+  [data-theme="light"] .inv-img::after {
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -1px 3px rgba(0,0,0,0.04);
+  }
+
+  /* Invention description */
+  .inv-desc {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text2);
+    line-height: 1.5;
+    margin-bottom: 18px;
+    padding: 0 8px;
+  }
+
+  /* COMPLETED GUESSES */
+  #guesses {
+    width: 100%;
+    display: flex; flex-direction: column; gap: 6px;
+    margin-bottom: 8px;
+  }
+  #bonus-area { width: 100%; }
+
+  .guess-row {
+    display: flex; align-items: center; gap: 8px;
+    animation: rowSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0; transform: translateY(12px);
+  }
+  /* rowSlideIn keyframe — see css/animations.css */
+
+  .guess-era-chip {
+    width: 36px; height: 40px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 800; letter-spacing: 1px;
+    font-family: var(--font-mono);
+    flex-shrink: 0;
+    transition: all 0.3s;
+    border: 2.5px solid transparent;
+    position: relative;
+    isolation: isolate;
+  }
+  .guess-era-chip.era-ok { background: var(--right); color: #000; }
+  .guess-era-chip.era-no { background: var(--no); color: #fff; }
+  .guess-era-chip .era-spin {
+    display: flex; flex-direction: column; align-items: center;
+    animation: eraSpinAnim 0.1s linear infinite;
+    line-height: 40px; white-space: pre;
+  }
+  /* eraSpinAnim keyframe — see css/animations.css */
+
+  .guess-cells {
+    display: flex; gap: 6px; flex: 1;
+  }
+  .guess-cell {
+    flex: 1; height: 40px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; font-weight: 700; font-family: var(--font-mono);
+    color: #000;
+    position: relative;
+    border: 2.5px solid transparent;
+    transition: border-color 0.4s ease;
+    isolation: isolate; /* stacking context so ::before z-index:-1 stays in front of page bg */
+  }
+
+  /* Gold glow, supernova, spin-strip, shimmer — see css/animations.css */
+
+  /* ACTIVE INPUT ROW */
+  .input-row {
+    width: 100%;
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 12px;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  }
+  .input-row.hidden { opacity: 0; pointer-events: none; height: 0; margin: 0; overflow: hidden; }
+
+  .input-era {
+    width: 36px; height: 44px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 800; letter-spacing: 1px;
+    font-family: var(--font-mono);
+    cursor: pointer; flex-shrink: 0;
+    transition: all 0.25s ease;
+    user-select: none; -webkit-tap-highlight-color: transparent;
+  }
+  .input-era.ad { background: color-mix(in srgb, var(--era-ad) 15%, transparent); border: 2.5px solid var(--era-ad); color: var(--era-ad); }
+  .input-era.bc { background: color-mix(in srgb, var(--era-bc) 15%, transparent); border: 2.5px solid var(--era-bc); color: var(--era-bc); }
+  .input-era:hover { filter: brightness(1.1); }
+
+  .input-cells {
+    display: flex; gap: 6px; flex: 1; min-width: 0;
+  }
+  .input-cell {
+    flex: 1; height: 44px; border-radius: 8px;
+    border: 2.5px solid var(--border);
+    background: var(--input-bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; font-weight: 700; font-family: var(--font-mono);
+    color: var(--text);
+    transition: border-color 0.2s, transform 0.12s;
+    box-shadow: 0 1px 3px var(--shadow);
+  }
+  .input-cell.has-digit { border-color: var(--text2); }
+  /* inputPop — see css/animations.css */
+
+  /* Column labels — offset to align with digit cells (era chip + gap) */
+  .col-labels {
+    display: flex; gap: 6px; width: 100%;
+    margin-bottom: 4px;
+    padding-left: 44px; /* 36px era chip + 8px row gap */
+  }
+  .col-lbl {
+    flex: 1; text-align: center;
+    font-size: 0.75rem; color: var(--text3); text-transform: uppercase;
+    letter-spacing: 1px; font-weight: 600;
+  }
+
+  /* NUMPAD — pinned at bottom of viewport, left-aligned with digit cells */
+  .numpad-wrap {
+    width: 100%;
+    flex-shrink: 0;
+    padding: 14px 20px 12px;
+    border-top: 1.2px solid var(--border);
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    background: var(--bg);
+  }
+  .np-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 44px);
+    gap: 6px;
+  }
+  .np-key {
+    border-radius: 8px;
+    border: 2.5px solid var(--border);
+    background: var(--key-bg);
+    color: var(--text);
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s, transform 0.1s, border-color 0.2s;
+  }
+  .np-key:hover { background: var(--key-hover); }
+  .np-key:active { transform: scale(0.95); }
+  .np-key.fn {
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .np-key.enter {
+    background: var(--key-bg);
+    color: var(--text);
+    border-color: var(--right);
+    font-weight: 800;
+    grid-row: span 2;
+  }
+  .np-key.enter:hover { background: var(--key-hover); }
+  .np-key.del { background: var(--surface); }
+  .np-key.wide { grid-column: span 2; }
+  .np-key.era-ad {
+    font-family: var(--font-ui); font-size: 0.75rem; font-weight: 800; letter-spacing: 1px;
+  }
+  .np-key.era-bc {
+    font-family: var(--font-ui); font-size: 0.75rem; font-weight: 800; letter-spacing: 1px;
+  }
+  .np-key.era-ad.sel {
+    border-color: var(--era-ad); color: var(--era-ad); background: color-mix(in srgb, var(--era-ad) 12%, transparent);
+  }
+  .np-key.era-ad.dim { color: var(--text3); }
+  .np-key.era-bc.sel {
+    border-color: var(--era-bc); color: var(--era-bc); background: color-mix(in srgb, var(--era-bc) 12%, transparent);
+  }
+  .np-key.era-bc.dim { color: var(--text3); }
+
+
+
+  /* TOAST */
+  #toast-box {
+    position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+    z-index: 1000; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .toast {
+    background: var(--toast-bg); color: var(--toast-text);
+    padding: 10px 24px; border-radius: 8px; font-weight: 700; font-size: 0.85rem;
+    animation: toastPop 0.3s cubic-bezier(0.16,1,0.3,1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+  /* toastPop keyframe — see css/animations.css */
+
+  /* MODALS */
+  .modal-bg { display:flex; position:fixed; inset:0; background:var(--overlay); z-index:500; justify-content:center; align-items:center; backdrop-filter:blur(4px); opacity:0; visibility:hidden; pointer-events:none; transition:opacity 0.2s, visibility 0.2s; }
+  .modal-bg.show { opacity:1; visibility:visible; pointer-events:auto; }
+  .modal {
+    background: var(--bg); border: 2px solid var(--border); border-radius: 16px;
+    padding: 32px 28px; max-width: 440px; width: 92%; max-height: 85vh; max-height: 85dvh;
+    overflow-y: auto; position: relative;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.3);
+    transform: scale(0.96); opacity:0;
+    transition: transform 0.2s cubic-bezier(0.16,1,0.3,1), opacity 0.2s;
+  }
+  .modal-bg.show .modal, .ad-modal-bg.show .modal { transform: scale(1); opacity:1; }
+  .modal h2 { font-size: 0.9rem; margin-bottom: 16px; text-align:center; letter-spacing:4px; text-transform:uppercase; color:var(--text3); font-weight:600; }
+  .modal-x { position:absolute; top:16px; right:20px; background:none; border:none; color:var(--text3); font-size:1.2rem; cursor:pointer; }
+  .modal-x:hover { color:var(--text); }
+
+  .stats-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin:16px 0; }
+  .st { text-align:center; background:var(--surface); border-radius:10px; padding:12px 8px; }
+  .st-n { font-size:1.3rem; font-weight:800; font-family:var(--font-mono); color:var(--text); }
+  .st-l { font-size:0.65rem; color:var(--text3); text-transform:uppercase; letter-spacing:0.5px; margin-top:4px; font-weight:600; line-height:1.3; }
+
+  .d-row { display:flex; align-items:center; gap:8px; margin:3px 0; }
+  .d-row .d-l { width:12px; text-align:right; font-family:var(--font-mono); color:var(--text3); font-weight:700; font-size:0.9rem; }
+  .d-row .d-b { background:var(--surface2); padding:3px 10px; min-width:22px; text-align:right; font-weight:700; border-radius:6px; font-size:0.85rem; font-family:var(--font-mono); color:var(--text2); }
+  .d-row .d-b.hl { background:var(--right); color:#000; }
+
+  #result-card { text-align:center; margin-top:16px; padding-top:16px; border-top:2px solid var(--border); }
+  .ans-yr { font-size:2rem; font-weight:900; font-family:var(--font-mono); color:var(--right); }
+  .ans-info { font-size:0.9rem; color:var(--text2); margin:6px 0; line-height:1.6; }
+  .ans-info strong { color:var(--text); }
+
+  .share-btn {
+    background:var(--right); color:#000; border:2px solid transparent; border-radius:8px;
+    padding:12px 0; font-size:0.85rem; font-weight:800; cursor:pointer;
+    margin-top:12px; font-family:var(--font-ui); letter-spacing:0.5px;
+    display:inline-flex; align-items:center; gap:8px;
+    width:150px; text-align:center; justify-content:center;
+    /* greenGlow animation — see css/animations.css */
+  }
+  .share-btn:hover { filter:brightness(1.1); }
+  #countdown { font-size:0.95rem; font-weight:600; margin:10px 0; font-family:var(--font-mono); color:var(--text3); }
+
+  .help-s { margin:14px 0; }
+  .help-s h3 { font-size:0.85rem; margin-bottom:6px; color:var(--right); font-weight:700; letter-spacing:2px; text-transform:uppercase; }
+  .help-s p, .help-s li { font-size:0.95rem; color:var(--text2); line-height:1.6; }
+  .help-s ul { padding-left:18px; }
+  .help-s li { margin:3px 0; }
+  .ex-cells { display:flex; gap:6px; margin:8px 0; }
+  .ex-c { width:40px; height:32px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.05rem; font-family:var(--font-mono); color:#000; }
+  #m-help .modal h2 { font-size:0.9rem; }
+
+
+  /* BONUS ROUND STYLES */
+  .bonus-section {
+    width: 100%;
+    display: flex; flex-direction: column; align-items: center;
+    animation: rowSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0; transform: translateY(-12px);
+  }
+  /* .bonus-stage entry animation is driven by JS: see animateDrawerOpen() in core.js,
+     so first-open and expand-from-collapsed look identical. */
+  .bonus-stage { }
+  .bonus-title {
+    font-size: 0.8rem; color: var(--text2); text-transform: uppercase;
+    letter-spacing: 3px; margin-bottom: 12px; font-weight: 700;
+  }
+  .bonus-prompt {
+    font-size: 1.2rem; font-weight: 800; text-align: center;
+    margin-bottom: 16px; line-height: 1.4;
+    transition: opacity 0.25s ease;
+  }
+  /* Drawer padding must live in the stylesheet: animateDrawerOpen() clears inline
+     padding when it releases, so an inline-only value would vanish after the open. */
+  .br1-drawer { padding-top: 12px; }
+  .bonus-guesses {
+    width: 100%; display: flex; flex-direction: column; gap: 6px;
+    margin-bottom: 12px;
+  }
+  .bonus-guess-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 14px; border-radius: 12px;
+    background: var(--surface); font-size: 0.85rem; font-weight: 600;
+    animation: rowSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0; transform: translateY(8px);
+  }
+  .bonus-guess-item .bg-icon { font-size: 1rem; flex-shrink: 0; }
+  .bonus-guess-item .bg-text { color: var(--text2); }
+  .bonus-guess-item.correct { background: var(--right); color: #000; }
+  .bonus-guess-item.correct .bg-text { color: #000; }
+  .bonus-hint {
+    font-size: 0.85rem; color: var(--text2); font-style: italic;
+    margin-bottom: 8px; text-align: center;
+  }
+  .bonus-type-hint {
+    font-size: 0.9rem; color: var(--text2); font-weight: 700;
+    margin-bottom: 12px; text-align: center;
+    padding: 8px 16px; background: var(--surface); border-radius: 8px;
+    border: 2px solid var(--border);
+  }
+  .bonus-input-wrap {
+    width: 100%; display: flex; gap: 8px; margin-bottom: 8px;
+  }
+  .bonus-submit {
+    height: 44px; padding: 0 20px; border-radius: 8px;
+    background: var(--right); color: #000; border: none;
+    font-size: 0.8rem; font-weight: 800; cursor: pointer;
+    font-family: var(--font-ui); letter-spacing: 0.5px;
+    min-width: 140px; text-align: center; justify-content: center;
+    transition: filter 0.15s, opacity 0.2s;
+  }
+  .bonus-submit:hover { filter: brightness(1.1); }
+  .bonus-submit:disabled { opacity: 0.4; cursor: not-allowed; filter: none; }
+  .bonus-result {
+    text-align: center; margin-top: 8px; padding: 12px;
+    background: var(--surface); border-radius: 10px;
+    font-size: 0.8rem; color: var(--text2); line-height: 1.6;
+  }
+  .bonus-result strong { color: var(--text); }
+  .continue-btn {
+    background: var(--right); color: #000; border: 2.5px solid transparent; border-radius: 8px;
+    padding: 12px 0; font-size: 0.9rem; font-weight: 800; cursor: pointer;
+    font-family: var(--font-ui); letter-spacing: 0.5px;
+    width: 150px; height: 44px; text-align: center; justify-content: center;
+    white-space: nowrap; display: inline-flex; align-items: center;
+    margin-top: 16px;
+  }
+  .continue-btn:hover { filter: brightness(1.1); }
+
+  /* MULTIPLE CHOICE */
+  .mc-options { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 10px; }
+  .mc-option {
+    width: 100%; padding: 14px 16px; border-radius: 8px;
+    border: 2.5px solid var(--border); background: var(--surface);
+    color: var(--text); font-family: var(--font-ui); font-size: 0.95rem;
+    font-weight: 700; cursor: pointer; text-align: left;
+    transition: border-color 0.2s, background 0.3s, color 0.3s, opacity 0.3s;
+    display: flex; align-items: center; gap: 10px;
+    animation: mcOptionSlideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    /* Base state is fully visible and the keyframes handle the fade-in, so
+       `animation: none` still leaves the tile visible. */
+  }
+  .mc-option:hover:not(.mc-correct):not(.mc-wrong):not(.mc-disabled) {
+    border-color: var(--text3); background: var(--surface2);
+  }
+  .mc-option.mc-correct { border-color: var(--right); background: var(--right); color: #000; cursor: default; pointer-events: none; }
+  .mc-option.mc-wrong { border-color: var(--wrong); background: var(--wrong); color: #000; cursor: default; pointer-events: none; }
+  .mc-option.mc-disabled { cursor: default; pointer-events: none; }
+  .mc-option.mc-loss { border-color: #b92d2d; background: #b92d2d; color: #000; cursor: default; pointer-events: none; }
+  .mc-option.locked { pointer-events: none !important; }
+  .mc-option .mc-icon { font-size: 1.1rem; flex-shrink: 0; }
+  /* mc-option.gold-bright, bonus-collapse.gold-bright — see css/animations.css */
+  .mc-attempt-info {
+    font-size: 0.8rem; color: var(--text2); text-align: center; margin-top: 6px;
+  }
+
+  .bonus-stats-section { margin-top: 16px; padding-top: 16px; border-top: 2px solid var(--border); }
+
+  /* ADS */
+  .ad-sidebar {
+    display: none; position: fixed;
+    /* Top-anchored below the header so it lines up with the content column.
+       Clips at the bottom on short screens. */
+    right: 40px; top: 96px; bottom: auto;
+    width: 300px; min-height: 600px; max-height: calc(100vh - 116px);
+    background: var(--ad-bg); border: 2px solid var(--border); border-radius: 12px;
+    overflow: hidden; z-index: 50;
+  }
+  @media (min-width: 1200px) { .ad-sidebar { display: block; } }
+  body:has(.modal-bg.show) .ad-sidebar,
+  body:has(.ad-modal-bg.show) .ad-sidebar,
+  body.nav-open .ad-sidebar { pointer-events: none; }
+
+  /* Mobile bottom ad anchor, shown below 1200px where the desktop sidebar is hidden.
+     #app-root is inset by the same height so the numpad never sits under it. */
+  .mobile-ad-anchor {
+    display: none; position: fixed; left: 0; right: 0; bottom: 0;
+    height: 50px; align-items: center; justify-content: center;
+    background: var(--ad-bg); border-top: 2px solid var(--border);
+    z-index: 60; overflow: hidden;
+  }
+  @media (max-width: 1199px) {
+    .mobile-ad-anchor { display: flex; }
+    #app-root { bottom: 50px; }
+  }
+  @media (min-width: 1200px) { .mobile-ad-anchor { display: none !important; } }
+
+  .ad-modal-bg {
+    display: flex; position: fixed; inset: 0; background: var(--overlay);
+    z-index: 600; justify-content: center; align-items: center;
+    backdrop-filter: blur(5px); opacity:0; visibility:hidden; pointer-events:none; transition:opacity 0.2s, visibility 0.2s;
+  }
+  .ad-modal-bg.show { opacity:1; visibility:visible; pointer-events:auto; }
+  .ad-modal {
+    background: var(--bg); border: 2px solid var(--border); border-radius: 16px;
+    padding: 28px 24px; max-width: 360px; width: 92%; text-align: center;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.3);
+  }
+  .ad-modal .ad-label {
+    font-size: 0.75rem; color: var(--text3); text-transform: uppercase;
+    letter-spacing: 1px; margin-bottom: 8px;
+  }
+  .ad-modal .ad-slot {
+    width: 300px; min-height: 250px; max-width: 100%;
+    margin: 0 auto 16px; background: var(--ad-bg);
+    border: 2px solid var(--border); border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .ad-modal .ad-btns {
+    display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+  }
+
+  /* STREAK / LIVES / PROGRESS DISPLAY */
+  #streak-display {
+    text-align: center; font-size: 0.75rem; color: var(--text2);
+    /* Equal spacing above and below: 8px desktop, 6px mobile */
+    letter-spacing: 3px; font-weight: 900; margin: 8px 0;
+  }
+  .streak-label { text-transform: uppercase; }
+  .streak-count { font-family: var(--font-mono); font-weight: 800; color: var(--text); }
+  #lives-display {
+    /* No top margin — streak's bottom margin handles the gap */
+    display: flex; gap: 5px; justify-content: center; margin: 0;
+  }
+  #progress-dots {
+    display: flex; gap: 5px; justify-content: center; margin: 2px 0;
+  }
+  .progress-dot {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 2.5px solid var(--border); background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.5s ease, border-color 0.5s ease;
+  }
+  .progress-dot.dot-used {
+    border-color: transparent;
+    background: var(--right);
+  }
+  /* dotFadeIn, dot-lighting — see css/animations.css */
+  .life-box {
+    width: 22px; height: 22px; border-radius: 5px;
+    border: 2.5px solid var(--border); background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.4s, border-color 0.4s, opacity 0.4s;
+  }
+  .life-box.active {
+    border-color: var(--right); background: color-mix(in srgb, var(--right) 15%, transparent);
+  }
+  .life-box.strike {
+    border-color: var(--no); background: color-mix(in srgb, var(--no) 20%, transparent);
+  }
+  .life-box.shield {
+    border-color: var(--right); background: color-mix(in srgb, var(--right) 15%, transparent);
+  }
+  .life-box svg { width: 12px; height: 12px; }
+  .life-box.active svg { stroke: var(--right); fill: none; }
+  .life-box.shield svg { stroke: var(--right); fill: none; }
+  .life-box.strike svg { stroke: var(--no); fill: none; }
+  /* strike-hit, shield-glow animations — see css/animations.css */
+
+  .bonus-collapse {
+    border-radius: 10px; margin: 8px 0; overflow: hidden;
+    border: 2.5px solid var(--border); background: var(--surface);
+    transition: all 0.3s; width: 100%;
+  }
+  .bonus-collapse.won { border-color: var(--right); }
+  .bonus-collapse.lost { border-color: #b92d2d; }
+  .bonus-collapse.lost .bonus-collapse-header { background: #b92d2d; color: #000; }
+  .bonus-collapse-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 16px; font-weight: 700; font-size: 0.9rem;
+    color: var(--text); user-select: none; cursor: pointer;
+  }
+  .bonus-collapse.won .bonus-collapse-header {
+    background: var(--right); color: #000;
+  }
+  .bonus-collapse-header .bc-arrow {
+    transition: transform 0.3s; font-size: 0.75rem;
+  }
+  .bonus-collapse.expanded .bc-arrow { transform: rotate(180deg); }
+  /* Every bonus round folds through the card cascade in core.js.
+     Do not add a second fold mechanism here. */
+
+  /* AUTOCOMPLETE */
+  .ac-wrap { position: relative; width: 100%; flex: 1; }
+  .ac-input {
+    width: 100%; height: 44px; border-radius: 12px; border: 2.5px solid var(--border);
+    background: var(--input-bg); color: var(--text); font-size: 1rem; padding: 0 14px;
+    font-family: var(--font-ui); outline: none;
+    transition: border-color 0.2s;
+  }
+  .ac-input:focus { border-color: var(--right); }
+  .ac-input::placeholder { color: var(--text3); font-weight: 400; }
+  .ac-list {
+    position: absolute; top: 48px; left: 0; right: 0;
+    background: var(--surface); border: 2px solid var(--border); border-radius: 12px;
+    max-height: 240px; overflow-y: auto; z-index: 10;
+    display: none; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+  .ac-list.show { display: block; }
+  .ac-item {
+    padding: 10px 14px; cursor: pointer; font-size: 0.9rem;
+    border-bottom: 2px solid var(--border); transition: background 0.1s;
+  }
+  .ac-item:last-child { border-bottom: none; }
+  .ac-item:hover, .ac-item.active { background: var(--key-hover); }
+
+  /* Desktop: fix game-scroll height so numpad never moves */
+  @media (min-width: 600px) and (min-height: 700px) {
+    main { flex: 1; }
+    .game-scroll {
+      flex: 1;
+      min-height: 0;
+    }
+  }
+
+  /* Mobile: 20% vertical reduction (0.8x scale) across all heights.
+     Desktop values are noted inline beside each override. */
+  @media (max-height: 700px) {
+    /* Compact phones (S25, etc.) — moderate compression */
+    .inv-card { padding: 12px 16px; margin-bottom: 4px; }
+    .inv-desc { font-size: 0.8rem; margin-bottom: 6px; }
+    #guesses { gap: 4px; }
+    .guess-cell { height: 36px; font-size: 1.15rem; }
+    .guess-era-chip { height: 36px; }
+    .round-counter { margin-bottom: 4px; }
+    .modal { padding: 24px 20px; }
+    .stats-grid { gap: 6px; margin: 10px 0; }
+    .st { padding: 8px 6px; }
+    .st-n { font-size: 1.05rem; }
+    .st-l { font-size: 0.6rem; }
+  }
+  @media (max-height: 600px) {
+    /* Very short screens (landscape or tiny phones) — aggressive compression */
+    header { padding: calc(8px + env(safe-area-inset-top, 0px)) 16px 6px; }
+    .inv-card { padding: 10px 14px; margin-bottom: 2px; }
+    .inv-img { margin-bottom: 6px; }
+    .inv-desc { margin-bottom: 4px; font-size: 0.78rem; }
+    #guesses { gap: 3px; }
+    .guess-cell { height: 34px; }
+    .guess-era-chip { height: 34px; }
+    .np-grid { grid-template-rows: repeat(4, 38px); gap: 4px; }
+    .input-row { margin-bottom: 6px; }
+    .input-cell { height: 38px; }
+  }
+
+  /* Mobile: 20% vertical reduction + additional card/numpad shrinks — LAST so it wins */
+  @media (max-width: 480px) {
+    /* Header — original: padding 16px/10px, buttons 34×34, logo 1.8rem, SVGs 16px, gap 8px */
+    header { padding: 10px 16px; }
+    .logo { font-size: 1.44rem; }
+    .logo .dot-circle { width: 0.17em; height: 0.17em; }
+    .hdr-btns { gap: 6px; }
+    .hdr-btns button { width: 28px; height: 28px; border-radius: 6px; font-size: 0.85rem; }
+    .hdr-btns button svg { width: 13px; height: 13px; }
+    .logo-stats-text { display: none; }
+    .setting-row:has(#set-rainbow) { display: none; }
+
+    /* Game scroll — original: padding 18px top, 12px bottom */
+    .game-scroll { padding: 14px 14px 8px; }
+
+    /* Inv card — 10px → 7px (-30%) → 6px (-20%) */
+    .inv-card { margin-bottom: 6px; }
+    /* Inv label — 8px → 6px (-30%) → 5px (-20%) */
+    .inv-label { margin-bottom: 5px; }
+    /* Inv name — 6px → 4px (-30%) → 3px (-20%) */
+    #inv-name { font-size: 1.36rem; margin-bottom: 3px; }
+    .inv-name-sub { font-size: 0.75rem; margin-top: 2px; }
+    /* Round counter — 6px → 4px (-30%) → 3px (-20%) */
+    .round-counter { margin-bottom: 3px; }
+
+    /* Inv image — 10px → 7px (-30%) → 6px (-20%) */
+    .inv-img { border-radius: 10px; margin-bottom: 6px; }
+    /* Inv description — 8px → 6px (-30%) → 5px (-20%) */
+    .inv-desc { margin-bottom: 5px; font-size: 0.72rem; }
+
+    /* Guess rows — keep gap reduction only */
+    #guesses { gap: 5px; margin-bottom: 6px; }
+    /* Col labels — original: margin-bottom 4px */
+    .col-labels { margin-bottom: 3px; }
+
+    /* Input row — original: margin-bottom 12px */
+    .input-row { margin-bottom: 10px; }
+    /* Input cells, guess cells, numpad — 5% height reduction from desktop */
+    /* original: input 44px, guess 40px, era 44/40px, numpad rows 44px */
+    .input-cell { height: 42px; }
+    .input-era { height: 42px; }
+    .guess-cell { height: 38px; }
+    .guess-era-chip { height: 38px; }
+    .np-grid { grid-template-rows: repeat(4, 42px); }
+
+    .ac-list { max-height: 180px; }
+
+    /* Modals — original: padding 32px 28px, h2 0.9rem/margin-bottom 16px, x top 16px */
+    .modal { padding: 26px 22px; }
+    .modal h2 { font-size: 0.72rem; margin-bottom: 13px; }
+    .modal-x { top: 13px; right: 16px; font-size: 0.96rem; }
+
+    /* Stats — original: gap 10px, margin 16px, st padding 10px 14px, st-n 1.2rem, st-l 0.7rem */
+    .stats-grid { gap: 6px; margin: 10px 0; }
+    .st { padding: 6px 4px; border-radius: 8px; }
+    .st-n { font-size: 0.9rem; }
+    .st-l { font-size: 0.5rem; letter-spacing: 0.5px; }
+    /* Distribution — original: d-row margin 3px, d-l 0.9rem, d-b padding 3px, font 0.85rem */
+    .d-row { margin: 2px 0; }
+    .d-row .d-l { font-size: 0.72rem; }
+    .d-row .d-b { padding: 2px 8px; font-size: 0.68rem; }
+    /* Result card — original: margin-top 16px, padding-top 16px, ans-yr 2rem, ans-info 0.9rem */
+    #result-card { margin-top: 13px; padding-top: 13px; }
+    .ans-yr { font-size: 1.6rem; }
+    .ans-info { font-size: 0.72rem; }
+    #countdown { font-size: 0.76rem; margin: 8px 0; }
+
+    /* Help — original: help-s margin 14px, h3 0.85rem/margin-bottom 6px, p/li 0.95rem */
+    .help-s { margin: 11px 0; }
+    .help-s h3 { font-size: 0.68rem; margin-bottom: 5px; }
+    .help-s p, .help-s li { font-size: 0.76rem; }
+    /* Example cells — original: height 32px, width 40px, font 1.05rem */
+    .ex-c { height: 26px; width: 32px; font-size: 0.84rem; }
+
+    /* Settings — original: section margin 20px, h3 0.85rem/margin-bottom 12px */
+    .settings-section { margin: 16px 0; }
+    .settings-section h3 { font-size: 0.68rem; margin-bottom: 10px; }
+    /* Setting rows — original: padding 12px 0, label 1rem, sub 0.9rem */
+    .setting-row { padding: 10px 0; }
+    .setting-label { font-size: 0.8rem; }
+    .setting-sub { font-size: 0.72rem; }
+    /* Toggle — original: width 48px, height 26px, knob 18px */
+    .toggle { width: 38px; height: 21px; }
+    .toggle .slider::before { width: 14px; height: 14px; }
+    .toggle input:checked + .slider::before { transform: translateX(17px); }
+    /* Scheme buttons — original: padding 6px 12px, font 0.75rem */
+    .scheme-btn { padding: 5px 10px; font-size: 0.6rem; }
+    /* Settings footer — original: margin-top 18px, padding-top 14px */
+    .settings-footer { margin-top: 14px; padding-top: 11px; }
+
+    /* Share/continue buttons — original: padding 12px, font 0.85rem, height 44px */
+    .share-btn { padding: 10px 0; font-size: 0.68rem; }
+    .continue-btn { height: 35px; font-size: 0.72rem; }
+
+    /* Progress dots — original: 22px */
+    .progress-dot { width: 18px; height: 18px; }
+    /* Life boxes — original: 22px, svg 12px */
+    .life-box { width: 15px; height: 15px; border-width: 2px; }
+    .life-box svg { width: 8px; height: 8px; }
+    #lives-display { gap: 4px; margin: 0; }
+    /* Streak display — original: font 0.75rem, letter-spacing 3px */
+    #streak-display { font-size: 0.55rem; letter-spacing: 2px; margin: 1px 0; }
+  }

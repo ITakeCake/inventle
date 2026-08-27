@@ -1,0 +1,18 @@
+# dependencies
+node_modules/
+
+# cloudflare
+.wrangler/
+worker/.wrangler/
+.dev.vars
+*.key.txt
+*-key.txt
+
+# generated — rebuild with tools/generate-invention-pages.js
+inventions/
+inventions-sitemap.xml
+
+# local
+.DS_Store
+Thumbs.db
+*.log

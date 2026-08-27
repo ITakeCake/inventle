@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://inventle.io/sitemap.xml
+Sitemap: https://inventle.io/inventions-sitemap.xml

@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terms of Service — Inventle</title>
+  <meta name="description" content="Terms of service for Inventle, the free daily invention guessing game: what you can expect from us and what we ask of players at inventle.io.">
+  <link rel="canonical" href="https://inventle.io/terms">
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Inventle">
+  <meta property="og:title" content="Terms of Service — Inventle">
+  <meta property="og:description" content="The terms for playing Inventle, the free daily invention guessing game.">
+  <meta property="og:url" content="https://inventle.io/terms">
+  <meta property="og:image" content="https://inventle.io/og-image.png?v=4">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Inventle — guess the year the invention was made">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Terms of Service — Inventle">
+  <meta name="twitter:description" content="The terms for playing Inventle, the free daily invention guessing game.">
+  <meta name="twitter:image" content="https://inventle.io/og-image.png?v=4">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💡</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0; padding: 0;
+      background: var(--bg); color: var(--text);
+      line-height: 1.7;
+    }
+
+    body[data-theme="dark"] {
+      --bg: #0f1115; --surface: #1e2128; --surface-hover: #2a2e37;
+      --text: #f0f2f5; --text2: #a1aab8; --text3: #6b7280;
+      --border: #374151; --primary: #3b82f6;
+      --right: #10b981; --near: #f59e0b;
+      --glow-right: rgba(16, 185, 129, 0.3);
+      --glow-near: rgba(245, 158, 11, 0.3);
+      --glow-primary: rgba(59, 130, 246, 0.15);
+    }
+    body[data-theme="light"] {
+      --bg: #f8fafc; --surface: #ffffff; --surface-hover: #f1f5f9;
+      --text: #0f172a; --text2: #475569; --text3: #94a3b8;
+      --border: #e2e8f0; --primary: #2563eb;
+      --right: #10b981; --near: #f59e0b;
+      --glow-right: rgba(16, 185, 129, 0.15);
+      --glow-near: rgba(245, 158, 11, 0.15);
+      --glow-primary: rgba(37, 99, 235, 0.08);
+    }
+
+    body[data-scheme="0"] { --right: #10b981; --near: #f59e0b; }
+    body[data-scheme="1"] { --right: #3b82f6; --near: #f97316; }
+    body[data-scheme="2"] { --right: #14b8a6; --near: #f43f5e; }
+    body[data-scheme="3"] { --right: #8b5cf6; --near: #eab308; }
+
+    a:hover { opacity: 0.8; }
+    header .logo { transition: transform 0.2s, filter 0.2s; }
+    header .logo:hover { transform: scale(1.05); filter: brightness(1.1); opacity: 1; }
+    #btn-menu:hover { background: var(--surface-hover) !important; color: var(--text) !important; border-color: var(--text3) !important; }
+    #nav-menu .logo { transition: transform 0.2s, filter 0.2s; }
+    #nav-menu .logo:hover { transform: scale(1.05); filter: brightness(1.1); opacity: 1; }
+
+  /* Header alignments matching i18n exactly */
+  header {
+    max-width: 100%;
+    width: 100%;
+    padding: 1rem 1.5rem;
+    border-bottom: 2px solid var(--border);
+    background: var(--bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+  }
+  .logo {
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1;
+    color: var(--right);
+    display: inline-block;
+    text-decoration: none;
+  }
+  .logo .tle { color: var(--near); }
+  .logo .dot-i { position: relative; display: inline-block; }
+  .logo .dot-circle {
+    position: absolute; width: 0.19em; height: 0.19em; border-radius: 50%;
+    background: var(--near); top: 0.05em; left: 50%; transform: translateX(-50%);
+  }
+  .logo-stats-text {
+    color: var(--text3);
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-left: 4px;
+    letter-spacing: -0.5px;
+  }
+  .hdr-btns { display: flex; gap: 8px; align-items: center; }
+  .hdr-btns button {
+    background: var(--surface); border: 2px solid var(--border); color: var(--text2);
+    width: 34px; height: 34px; border-radius: 8px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s ease; padding: 6px; box-sizing: border-box;
+  }
+  .hdr-btns button svg { width: 16px; height: 16px; }
+  .hdr-btns button:hover { background: var(--surface-hover); color: var(--text); border-color: var(--text3); }
+  /* muted sound button — the crossed-out icon carries the meaning, this just
+     softens it so an off control does not read as an active one */
+  .hdr-btns button#btn-sound.muted { color: var(--text3); }
+  .hdr-btns button#btn-sound.muted:hover { color: var(--text2); }
+
+  .play-btn {
+    background: var(--right) !important;
+    color: #fff !important;
+    border: none !important;
+    padding: 0 16px !important;
+    width: auto !important;
+    font-weight: 700;
+    font-size: 0.85rem;
+    border-radius: 8px !important;
+    height: 34px !important;
+    transition: transform 0.2s, filter 0.2s !important;
+  }
+  .play-btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.1);
+  }
+
+  @media (min-width: 481px) {
+    header { padding: 1rem 2rem; }
+    .hdr-btns { gap: 12px; }
+    .hdr-btns button { width: 40px; height: 40px; }
+    .hdr-btns button svg { width: 20px; height: 20px; }
+    .play-btn { height: 40px !important; }
+    #btn-menu { width: 40px !important; height: 40px !important; }
+    #btn-menu svg { width: 20px; height: 20px; }
+    header > div:first-child { gap: 20px !important; }
+  }
+  @media (max-width: 480px) {
+    header { padding: 10px 16px; }
+    .logo { font-size: 1.44rem; }
+    .logo .dot-circle { width: 0.17em; height: 0.17em; }
+    .logo-stats-text { display: none; }
+    .setting-row:has(#set-rainbow) { display: none; }
+    .hdr-btns { gap: 6px; }
+    .hdr-btns button { width: 28px; height: 28px; border-radius: 6px; }
+    .hdr-btns button svg { width: 13px; height: 13px; }
+    #btn-menu { width: 28px !important; height: 28px !important; }
+    #btn-menu svg { width: 13px; height: 13px; }
+  }
+
+  /* Menu styles */
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    margin: 4px 12px;
+    color: var(--text2);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-radius: 12px;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .nav-item:hover { background: var(--surface-hover); color: var(--text); }
+  @media (hover: hover) { .nav-item:hover { transform: translateX(4px); } }
+  .nav-item svg { color: var(--text3); transition: color 0.2s; flex-shrink: 0; }
+  .nav-item:hover svg { color: var(--primary); }
+  .nav-footer-link { display: flex; align-items: center; gap: 8px; color: var(--text3); text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: color 0.2s; }
+  .nav-footer-link:hover { color: var(--text); }
+  #nav-menu.open { left: 0; }
+  #nav-overlay.open { display: block !important; opacity: 1; }
+
+    /* ─── Hero ────────────────────────────────────────── */
+    .page-hero {
+      padding: 56px 24px 20px;
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .page-hero h1 {
+      font-weight: 800;
+      font-size: 2.6rem;
+      letter-spacing: -1.5px;
+      margin: 0 0 10px;
+      color: var(--text);
+      display: inline-block;
+      position: relative;
+    }
+    .page-hero h1::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 10%; width: 80%; height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--right), var(--near), var(--primary));
+    }
+    .page-hero .subtitle {
+      color: var(--text3); font-size: 1.05rem; margin: 16px 0 0; font-weight: 500;
+    }
+
+    /* ─── Content ─────────────────────────────────────── */
+    .content { max-width: 700px; margin: 0 auto; padding: 20px 24px 48px; }
+
+    /* ─── Cards ───────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      margin-bottom: 24px;
+      transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--card-accent, var(--primary)), transparent);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .card:hover {
+      border-color: var(--text3);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    }
+    .card:hover::before { opacity: 1; }
+
+    .card-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+    .card-icon {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .card-icon::after {
+      content: ''; position: absolute; inset: -2px; border-radius: 50%;
+      background: inherit; opacity: 0.2; z-index: -1;
+    }
+    .card-icon svg { width: 18px; height: 18px; color: #fff; stroke: #fff; }
+    .card h2 {
+      font-weight: 800; font-size: 1.2rem; letter-spacing: -0.3px;
+      color: var(--text); margin: 0; flex: 1;
+    }
+    .card p, .card li { color: var(--text2); line-height: 1.8; font-size: 0.93rem; }
+    .card p { margin: 0 0 12px; }
+    .card p:last-child { margin-bottom: 0; }
+    .card ul { padding-left: 20px; margin: 0; }
+    .card li { margin-bottom: 6px; }
+    .card a { color: var(--primary); text-decoration: none; font-weight: 600; }
+
+    /* ─── Footer ──────────────────────────────────────── */
+    .page-footer {
+      max-width: 700px; margin: 0 auto 40px; padding: 24px;
+      text-align: center; border-top: 2px solid var(--border);
+      font-size: 0.85rem; color: var(--text3);
+    }
+    .page-footer a { color: var(--text3); text-decoration: none; font-weight: 600; transition: color 0.2s; }
+    .page-footer a:hover { color: var(--text); }
+
+    /* ─── Responsive ──────────────────────────────────── */
+    @media (max-width: 480px) {
+      .page-hero { padding: 28px 16px 20px; }
+      .page-hero h1 { font-size: 1.7rem; letter-spacing: -1px; }
+      .page-hero .subtitle { font-size: 0.9rem; margin-top: 10px; }
+      .content { padding: 0 16px 32px; }
+      .card { padding: 18px; border-radius: 14px; margin-bottom: 16px; }
+      .card-header { margin-bottom: 12px; gap: 10px; }
+      .card-icon { width: 28px; height: 28px; border-radius: 8px; }
+      .card-icon svg { width: 14px; height: 14px; }
+      .card h2 { font-size: 1.05rem; }
+      .card p, .card li { font-size: 0.87rem; line-height: 1.65; }
+      .page-footer { padding: 20px 16px; font-size: 0.8rem; margin-bottom: 24px; }
+    }
+
+    /* ─── Card entrance animations ────────────────────── */
+    .card {
+      opacity: 0; transform: translateY(20px);
+      animation: cardIn 0.5s ease forwards;
+    }
+    .card:nth-child(1) { animation-delay: 0.05s; }
+    .card:nth-child(2) { animation-delay: 0.1s; }
+    .card:nth-child(3) { animation-delay: 0.15s; }
+    .card:nth-child(4) { animation-delay: 0.2s; }
+    .card:nth-child(5) { animation-delay: 0.25s; }
+    .card:nth-child(6) { animation-delay: 0.3s; }
+    .card:nth-child(7) { animation-delay: 0.35s; }
+    .card:nth-child(8) { animation-delay: 0.4s; }
+    @keyframes cardIn { to { opacity: 1; transform: translateY(0); } }
+
+    .modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:500; justify-content:center; align-items:center; backdrop-filter:blur(4px); }
+    .modal-bg.show { display:flex; }
+    .modal { background:var(--bg); border:2px solid var(--border); border-radius:16px; padding:32px 28px; max-width:440px; width:92%; max-height:85vh; overflow-y:auto; position:relative; box-shadow:0 24px 80px rgba(0,0,0,0.3); }
+    .modal h2 { font-size:0.9rem; margin-bottom:16px; text-align:center; letter-spacing:4px; text-transform:uppercase; color:var(--text3); font-weight:600; }
+    .modal-x { position:absolute; top:16px; right:20px; background:none; border:none; color:var(--text3); font-size:1.2rem; cursor:pointer; }
+    .modal-x:hover { color:var(--text); }
+    .settings-section { margin:20px 0; }
+    .settings-section h3 { font-size:0.85rem; color:var(--text3); text-transform:uppercase; letter-spacing:2px; margin-bottom:12px; font-weight:700; }
+    .setting-row { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:2px solid var(--border); }
+    .setting-row:last-child { border-bottom:none; }
+    .setting-label { font-size:1rem; font-weight:700; color:var(--text); }
+    .setting-sub { font-size:0.9rem; color:var(--text3); margin-top:2px; }
+    .toggle { position:relative; width:48px; height:26px; flex-shrink:0; }
+    .toggle input { opacity:0; width:0; height:0; }
+    .toggle .slider { position:absolute; inset:0; background:var(--surface-hover); border-radius:26px; cursor:pointer; transition:background 0.3s; border:2.5px solid var(--border); }
+    .toggle .slider::before { content:''; position:absolute; width:18px; height:18px; left:3px; bottom:2px; background:var(--text3); border-radius:50%; transition:transform 0.3s, background 0.3s; }
+    .toggle input:checked + .slider { background:var(--right); border-color:var(--right); }
+    .toggle input:checked + .slider::before { transform:translateX(22px); background:#000; }
+    .scheme-btns { display:flex; gap:6px; flex-wrap:wrap; }
+    .scheme-btn { padding:6px 12px; border-radius:6px; border:2.5px solid var(--border); background:var(--surface); color:var(--text2); font-size:0.75rem; font-weight:700; cursor:pointer; font-family:inherit; transition:all 0.2s; }
+    .scheme-btn.active { border-color:var(--right); color:var(--right); }
+    .settings-footer { text-align:center; margin-top:18px; padding-top:14px; border-top:2px solid var(--border); }
+    .settings-footer a { color:var(--text3); font-size:0.8rem; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:color 0.2s; }
+    .settings-footer a:hover { color:var(--text); }
+
+  </style>
+</head>
+<body>
+<script>(function(){try{var p=JSON.parse(localStorage.getItem('wi_prefs'))||{};document.body.setAttribute('data-theme',p.theme||'dark');document.body.setAttribute('data-scheme',p.scheme!=null?p.scheme:0);if(p.bgTheme)document.body.setAttribute('data-bg-theme',p.bgTheme);if(p.schemeBtn){var s=document.createElement('style');s.textContent='#btn-scheme{display:flex !important}';document.head.appendChild(s);}}catch(e){document.body.setAttribute('data-theme','dark');document.body.setAttribute('data-scheme','0');}})();</script>
+
+<header>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button id="btn-menu" style="background:var(--surface);border:2px solid var(--border);color:var(--text2);width:34px;height:34px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;margin-left:-8px;" title="Menu"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+    <a href="index.html" class="logo" style="text-decoration:none;"><span class="dot-i">i<span class="dot-circle"></span></span>nven<span class="tle">tle</span> <span class="logo-stats-text">TOS</span></a>
+  </div>
+  <div class="hdr-btns" style="display:flex;align-items:center;">
+    <a href="index.html" style="text-decoration:none;display:inline-flex;">
+      <button data-i18n="btn.playInventle" style="display:inline-flex;align-items:center;background:var(--right);color:#fff;border:none;border-radius:8px;padding:0 16px;font-weight:700;font-size:0.85rem;letter-spacing:0.5px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.1);width:auto !important;line-height:1;" onmouseover="this.style.transform='translateY(-1px)';this.style.filter='brightness(1.1)';" onmouseout="this.style.transform='none';this.style.filter='none';">Play Inventle</button>
+    </a>
+    <button id="btn-scheme" title="Change Colors" style="display:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12" r="2.5"/><path d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10c1.38 0 2.5-1.12 2.5-2.5 0-.61-.23-1.21-.64-1.67A1.37 1.37 0 0113.5 17c.75 0 1.37-.56 1.48-1.29C18.07 14.94 22 11.07 22 6c0-2.21-4.49-4-10-4z"/></svg></button>
+    <button id="btn-sound" title="Sound"></button>
+    <button id="btn-settings" title="Settings"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1.08-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1.08 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33h.08a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v.08a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>
+  </div>
+</header>
+
+<div class="page-hero">
+  <h1 data-i18n="terms.title">Terms of Service</h1>
+  <p class="subtitle" data-i18n="terms.lastUpdated">Last updated: April 2026</p>
+</div>
+
+<div class="content">
+  <div class="card" style="--card-accent: var(--right);">
+    <div class="card-header">
+      <div class="card-icon" style="background: var(--right);"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+      <h2 data-i18n="terms.acceptance">Acceptance of Terms</h2>
+    </div>
+    <p data-i18n="terms.acceptanceText">By accessing or using Inventle ("the Game"), you agree to be bound by these Terms of Service. If you do not agree, please do not use the Game.</p>
+  </div>
+
+  <div class="card" style="--card-accent: var(--near);">
+    <div class="card-header">
+      <div class="card-icon" style="background: var(--near);"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+      <h2 data-i18n="terms.description">Description of Service</h2>
+    </div>
+    <p data-i18n="terms.descriptionText">Inventle is a free, browser-based daily guessing game. The Game is provided "as is" without warranties of any kind.</p>
+  </div>
+
+  <div class="card" style="--card-accent: var(--primary);">
+    <div class="card-header">
+      <div class="card-icon" style="background: var(--primary);"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+      <h2 data-i18n="terms.fairPlay">Fair Play</h2>
+    </div>
+    <p data-i18n="terms.fairPlayText1">There are no strict rules here — it's a casual game. You <em>can</em> look up answers or use tools if you want, but you'd only be spoiling the fun for yourself. The whole point is the challenge!</p>
+    <p data-i18n="terms.fairPlayText2">That said, please don't do anything that would break the game for others or mess with the servers.</p>
+  </div>
+
+  <div class="card" style="--card-accent: var(--right);">
+    <div class="card-header">
+      <div class="card-icon" style="background: var(--right);"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+      <h2 data-i18n="terms.dataPrivacy">Data & Privacy</h2>
+    </div>
+    <p data-i18n="terms.dataPrivacyText" data-i18n-html="1">Your use of the Game is also governed by the <a href="privacy.html">Privacy Policy</a>. Inventle collects only anonymous gameplay statistics. No personal data is collected or stored.</p>
+  </div>
+
+  <div class="card" style="--card-accent: var(--near);">
+    <div class="card-header">
+      <div class="card-icon" style="background: var(--near);"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+      <h2 data-i18n="terms.availability">Availability</h2>
+    </div>
+    <p data-i18n="terms.availabilityText">The goal is to keep Inventle available 24/7, but uninterrupted access isn't guaranteed. The Game may be temporarily unavailable for maintenance or updates.</p>
+  </div>
+
+  <div class="card" style="--card-accent: var(--primary);">
+    <div class="card-header">
+      <div class="card-icon" style="background: var(--primary);"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+      <h2 data-i18n="terms.liability">Limitation of Liability</h2>
+    </div>
+    <p data-i18n="terms.liabilityText">Inventle and its creator shall not be liable for any damages arising from your use of the Game.</p>
+  </div>
+
+  <div class="card" style="--card-accent: var(--right);">
+    <div class="card-header">
+      <div class="card-icon" style="background: var(--right);"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+      <h2 data-i18n="terms.modifications">Modifications</h2>
+    </div>
+    <p data-i18n="terms.modificationsText">These terms may be modified at any time. Continued use of the Game after changes constitutes acceptance of the new terms.</p>
+  </div>
+
+  <div class="card" style="--card-accent: var(--near);">
+    <div class="card-header">
+      <div class="card-icon" style="background: var(--near);"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+      <h2 data-i18n="terms.contact">Contact</h2>
+    </div>
+    <p data-i18n="terms.contactText" data-i18n-html="1">Questions? Reach out at <a href="mailto:inventle.game@gmail.com">inventle.game@gmail.com</a></p>
+  </div>
+</div>
+
+<footer class="page-footer">
+  <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;">
+    <a href="about.html" data-i18n="nav.about">About</a>
+    <a href="how-to-play.html" data-i18n="help.title">How to Play</a>
+    <a href="privacy.html" data-i18n="nav.privacy">Privacy</a>
+    <a href="terms.html" data-i18n="nav.terms">Terms</a>
+    <a href="contact.html" data-i18n="contact.title">Contact</a>
+  </div>
+  <div>&copy; 2025-2026 Inventle</div>
+</footer>
+
+
+<!-- Slide-out Nav Menu -->
+<!-- Settings Modal -->
+<div class="modal-bg" id="m-settings">
+  <div class="modal">
+    <button class="modal-x" id="x-settings">&times;</button>
+    <h2 data-i18n="settings.title">Settings</h2>
+    <div class="settings-section">
+      <h3 data-i18n="settings.language">Language</h3>
+      <div class="setting-row">
+        <div><select id="lang-select" style="background:var(--surface);color:var(--text);border:2px solid var(--border);border-radius:8px;padding:8px 12px;font-size:0.9rem;font-weight:600;width:100%;cursor:pointer;font-family:inherit;"></select></div>
+      </div>
+    </div>
+    <div class="settings-section">
+      <h3 data-i18n="settings.appearance">Appearance</h3>
+      <div class="setting-row">
+        <div><div class="setting-label" data-i18n="settings.darkMode">Dark Mode</div></div>
+        <label class="toggle"><input type="checkbox" id="set-dark"><span class="slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <div><div class="setting-label" data-i18n="settings.colorScheme">Color Scheme</div></div>
+        <div class="scheme-btns" id="scheme-btns">
+          <button class="scheme-btn" data-scheme="0" data-i18n="settings.default">Default</button>
+          <button class="scheme-btn" data-scheme="1">Deut</button>
+          <button class="scheme-btn" data-scheme="2">Trit</button>
+          <button class="scheme-btn" data-scheme="3">Prot</button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label" data-i18n="settings.colorBlindBtn">Color Blind Button</div>
+          <div class="setting-sub" data-i18n="settings.colorBlindSub">Show color scheme toggle in header</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="set-scheme-btn"><span class="slider"></span></label>
+      </div>
+    </div>
+    <div class="settings-section">
+      <h3 data-i18n="settings.animations">Animations</h3>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label" data-i18n="settings.spinAnimation">Spin Animation</div>
+          <div class="setting-sub" data-i18n="settings.spinSub">Digit reel effect on guesses</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="set-spin"><span class="slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label" data-i18n="settings.goldGlow">Gold Glow</div>
+          <div class="setting-sub" data-i18n="settings.goldGlowSub">Glow effect on correct digits</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="set-glow"><span class="slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label" data-i18n="settings.soundEffects">Sound Effects</div>
+          <div class="setting-sub" data-i18n="settings.soundEffectsSub">Clicks and game sounds</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="set-sound"><span class="slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label" data-i18n="settings.rainbowInfinite">Rainbow Infinite</div>
+          <div class="setting-sub" data-i18n="settings.rainbowSub">Animated rainbow text on Infinite mode</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="set-rainbow"><span class="slider"></span></label>
+      </div>
+    </div>
+
+    <div class="settings-footer">
+      <a href="privacy.html" style="color:var(--text3);font-size:0.85rem;text-decoration:none;display:block;margin-bottom:8px;" data-i18n="settings.privacyPolicy">Privacy Policy</a>
+      <a href="contact.html" style="color:var(--text3);font-size:0.85rem;text-decoration:none;display:block;margin-bottom:8px;" data-i18n="settings.contact">Contact</a>
+      <div style="display:flex;gap:20px;justify-content:center;align-items:center;">
+        <a href="https://ko-fi.com/blakeypooh" target="_blank" rel="noopener"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 010 8h-1"/><path d="M3 8h14v9a4 4 0 01-4 4H7a4 4 0 01-4-4V8z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg><span data-i18n="settings.support">Support</span></a>
+        <a href="https://github.com/ITakeCake" target="_blank" rel="noopener"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="nav-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:998;transition:opacity 0.3s;opacity:0;"></div>
+<nav id="nav-menu" style="position:fixed;top:0;left:0;transform:translateX(-100%);width:280px;height:100%;background:var(--surface);border-right:3px solid var(--border);box-shadow:4px 0 24px rgba(0,0,0,0.1);z-index:999;transition:transform 0.25s cubic-bezier(0.16,1,0.3,1);overflow-y:auto;display:flex;flex-direction:column;will-change:transform;">
+  <div style="padding:1.5rem;border-bottom:3px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+    <a href="index.html" class="logo" style="font-size:1.65rem;letter-spacing:-0.5px;text-decoration:none;"><span class="dot-i">i<span class="dot-circle"></span></span>nven<span class="tle">tle</span></a>
+    <button id="nav-close" style="position:static;width:36px;height:36px;background:var(--surface-hover);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text2);cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='var(--border)';this.style.color='var(--text)';this.style.transform='rotate(90deg) scale(1.1)';" onmouseout="this.style.background='var(--surface-hover)';this.style.color='var(--text2)';this.style.transform='none';">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+  </div>
+  <div style="padding:1rem 0;flex:1;">
+    <a href="index.html" class="nav-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> <span data-i18n="nav.dailyPuzzle">Daily Puzzle</span></a>
+    <a href="infinite.html" class="nav-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.178 8c5.096 0 5.096 8 0 8-5.095 0-7.133-8-12.739-8-4.585 0-4.585 8 0 8 5.606 0 7.644-8 12.739-8z"/></svg> <span data-i18n="nav.infiniteMode">Infinite Mode</span></a>
+    <a href="stats.html" class="nav-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg> <span data-i18n="nav.globalStats">Global Stats</span></a>
+    <div style="height:2px;background:var(--border);margin:12px 20px;border-radius:1px;"></div>
+    <a href="about.html" class="nav-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> <span data-i18n="nav.about">About</span></a>
+    <a href="how-to-play.html" class="nav-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> <span data-i18n="help.title">How to Play</span></a>
+    <a href="/inventions/" class="nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+      <span data-i18n="nav.browseInventions">Browse Inventions</span>
+    </a>
+    <a href="privacy.html" class="nav-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> <span data-i18n="settings.privacyPolicy">Privacy Policy</span></a>
+    <a href="terms.html" class="nav-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> <span data-i18n="nav.termsOfService">Terms of Service</span></a>
+    <a href="contact.html" class="nav-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> <span data-i18n="contact.title">Contact</span></a>
+  </div>
+  <div style="padding:1.5rem;border-top:3px solid var(--border);display:flex;flex-direction:column;gap:12px;">
+    <a href="https://ko-fi.com/blakeypooh" target="_blank" rel="noopener" class="nav-footer-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 010 8h-1"/><path d="M3 8h14v9a4 4 0 01-4 4H7a4 4 0 01-4-4V8z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg> <span data-i18n="settings.support">Support</span></a>
+    <a href="https://github.com/ITakeCake" target="_blank" rel="noopener" class="nav-footer-link"><svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> <span data-i18n="nav.github">GitHub</span></a>
+  </div>
+</nav>
+
+<script>
+(function(){
+  var menu=document.getElementById('nav-menu');
+  var overlay=document.getElementById('nav-overlay');
+  var btnOpen=document.getElementById('btn-menu');
+  var btnClose=document.getElementById('nav-close');
+  function openMenu(){menu.style.transform='translateX(0)';overlay.style.display='block';setTimeout(function(){overlay.style.opacity='1';},10);}
+  function closeMenu(){menu.style.transform='translateX(-100%)';overlay.style.opacity='0';setTimeout(function(){overlay.style.display='none';},300);}
+  if(btnOpen) btnOpen.onclick=openMenu;
+  if(btnClose) btnClose.onclick=closeMenu;
+  if(overlay) overlay.onclick=closeMenu;
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&menu.style.transform==='translateX(0)')closeMenu();});
+})();
+</script>
+
+<script src="js/i18n.js?v=b23"></script>
+<script src="js/settings-page.js?v=b25"></script>
+<script src="js/sound.js?v=b26"></script>
+
+</body>
+</html>

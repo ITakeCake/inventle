@@ -1,0 +1,22 @@
+name = "inventle-stats"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+ALLOWED_ORIGIN = "https://inventle.pages.dev"
+# INVENTIONS_JSON is set via: wrangler secret put INVENTIONS_JSON < inventions_minified.json
+# Or use a KV namespace for larger data (see below)
+
+[[d1_databases]]
+binding = "DB"
+database_name = "inventle-stats"
+database_id = "YOUR_D1_DATABASE_ID"
+
+[[kv_namespaces]]
+binding = "INVENTIONS_KV"
+id = "YOUR_KV_NAMESPACE_ID"
+
+# Direct email for "See something wrong?" reports. Requires Email Routing enabled on
+# the inventle.io zone with the destination verified; until then remove this block.
+[[send_email]]
+name = "REPORT_MAIL"

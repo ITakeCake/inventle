@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en" style="background:#000">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Inventle - The Daily Invention Guessing Game</title>
+<meta name="description" content="A free daily invention guessing game — like Wordle for history. Guess the year a famous invention was created in 6 tries. New puzzle every day, no app or signup.">
+<link rel="canonical" href="https://inventle.io/">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Inventle">
+<meta property="og:title" content="Inventle — The Daily Invention Guessing Game">
+<meta property="og:description" content="Guess the year the invention was made in 6 tries. A free daily Wordle-style history game — new puzzle every day.">
+<meta property="og:url" content="https://inventle.io/">
+<meta property="og:image" content="https://inventle.io/og-image.png?v=4">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Inventle — guess the year the invention was made">
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Inventle — The Daily Invention Guessing Game">
+<meta name="twitter:description" content="Guess the year the invention was made in 6 tries. A free daily Wordle-style history game.">
+<meta name="twitter:image" content="https://inventle.io/og-image.png?v=4">
+<!-- Structured data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Inventle",
+  "alternateName": "Inventle — Daily Invention Guessing Game",
+  "url": "https://inventle.io/",
+  "description": "A free daily invention guessing game: guess the year a famous invention was created in 6 tries. Like Wordle, but for invention history.",
+  "inLanguage": "en"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoGame",
+  "name": "Inventle",
+  "url": "https://inventle.io/",
+  "description": "A free daily browser game where you guess the year a famous invention was made in 6 tries. Like Wordle, but for invention history. Includes an unlimited infinite mode.",
+  "genre": ["Puzzle", "Trivia"],
+  "gamePlatform": "Web browser",
+  "applicationCategory": "Game",
+  "operatingSystem": "Any",
+  "playMode": "SinglePlayer",
+  "isAccessibleForFree": true,
+  "inLanguage": "en",
+  "image": "https://inventle.io/og-image.png?v=4",
+  "author": {"@type": "Organization", "name": "Inventle", "url": "https://inventle.io/"},
+  "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD", "availability": "https://schema.org/InStock"}
+}
+</script>
+<meta name="theme-color" content="#000000">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=2">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<!-- Font preconnect + preload — must come BEFORE stylesheets so font fetch starts immediately -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&family=Nunito:wght@800;900&family=Source+Code+Pro:wght@400;700&display=fallback">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&family=Nunito:wght@800;900&family=Source+Code+Pro:wght@400;700&display=fallback">
+<link rel="stylesheet" href="css/main.css?v=14">
+<link rel="stylesheet" href="css/animations.css?v=4">
+<!-- Ad network loader goes here -->
+
+<style>
+  /* ---------------------------------------------------
+     EXPERIMENT 3: CLEAN & PROFESSIONAL MODERN UI
+     Overriding CSS variables and refining layout
+     --------------------------------------------------- */
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+    background: var(--bg) !important;
+    transition: background-color 0.3s ease, color 0.3s ease,
+                --right 2s ease, --near 2s ease, --wrong 2s ease,
+                --era-ad-c 2s ease, --era-bc-c 2s ease;
+  }
+
+  /* Refined Light/Dark Palette */
+  body[data-theme="dark"] {
+    --bg: #0f1115;
+    --surface: #1e2128;
+    --surface-hover: #2a2e37;
+    --text: #f0f2f5;
+    --text2: #a1aab8;
+    --text3: #6b7280;
+    --border: #374151;
+    --primary: #3b82f6; /* Modern Blue */
+    --right: #10b981; /* Emerald Green */
+    --near: #f59e0b; /* Amber */
+    --wrong: #374151; /* Slate */
+  }
+
+  body[data-theme="light"] {
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --surface-hover: #f1f5f9;
+    --text: #0f172a;
+    --text2: #475569;
+    --text3: #94a3b8;
+    --border: #e2e8f0;
+    --primary: #2563eb;
+    --right: #10b981;
+    --near: #f59e0b;
+    --wrong: #cbd5e1;
+  }
+
+  /* Color schemes — specificity (0,2,1) to override theme defaults */
+  /* Scheme 0: uses theme's default --right/--near, only sets era colors */
+  body[data-theme][data-scheme="0"] { --era-ad-c: var(--right); --era-bc-c: var(--near); }
+  /* Schemes 1-3: colorblind overrides, always win over theme defaults */
+  body[data-theme][data-scheme="1"] { --right: #3b82f6; --near: #f97316; --era-ad-c: #3b82f6; --era-bc-c: #f97316; }
+  body[data-theme][data-scheme="2"] { --right: #14b8a6; --near: #f43f5e; --era-ad-c: #14b8a6; --era-bc-c: #f43f5e; }
+  body[data-theme][data-scheme="3"] { --right: #8b5cf6; --near: #eab308; --era-ad-c: #8b5cf6; --era-bc-c: #eab308; }
+
+  /* Cascade fold — loss tile + header classes */
+  .mc-option.mc-loss { border-color: #b92d2d; background: #b92d2d; color: #000; cursor: default; pointer-events: none; }
+  .bonus-collapse.lost .bonus-collapse-header { background: #b92d2d; color: #000; }
+  /* Cascade fold stage — wraps header + drawer during bonus round animation */
+  .bonus-stage { position: relative; overflow: hidden; }
+
+  /* Header refinements */
+  header {
+    max-width: 100%;
+    width: 100%;
+    padding: 1rem 1.5rem;
+    border-bottom: 2px solid var(--border);
+    background: var(--bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .hdr-btns button {
+    color: var(--text2);
+    border-radius: 8px;
+    padding: 6px;
+    transition: all 0.2s ease;
+  }
+  .hdr-btns button:hover {
+    background: var(--surface-hover);
+    color: var(--text);
+  }
+  /* muted sound button — the crossed-out icon carries the meaning, this just
+     softens it so an off control does not read as an active one */
+  .hdr-btns button#btn-sound.muted { color: var(--text3); }
+  .hdr-btns button#btn-sound.muted:hover { color: var(--text2); }
+
+  /* Desktop header scaling */
+  @media (min-width: 481px) {
+    header { padding: 1rem 2rem; }
+    .hdr-btns { gap: 12px; }
+    .hdr-btns button { width: 40px; height: 40px; }
+    .hdr-btns button svg { width: 20px; height: 20px; }
+    #btn-menu { width: 40px !important; height: 40px !important; }
+    #btn-menu svg { width: 20px; height: 20px; }
+    header > div:first-child { gap: 20px !important; }
+  }
+
+
+  /* Card and Image layout */
+  .inv-card {
+    border-radius: 16px;
+    border: 2px solid var(--border);
+    box-shadow: 0 4px 24px -6px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    background: var(--surface);
+    margin-bottom: 1rem;
+  }
+  .inv-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--primary);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  #inv-name {
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    letter-spacing: -0.5px;
+  }
+
+  .inv-img {
+    border-radius: 12px;
+    box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.15);
+    border: 2px solid var(--border);
+    overflow: hidden;
+    margin: 1.5rem auto;
+  }
+
+  /* Inputs and Guesses */
+  .input-cell {
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    font-weight: 700;
+    font-size: 1.75rem;
+    box-shadow: 0 2px 8px -2px rgba(0,0,0,0.05);
+    transition: transform 0.1s, border-color 0.2s;
+  }
+  .input-cell.active-cell {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+  }
+
+  .input-era {
+    border-radius: 12px;
+    font-weight: 700;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    box-shadow: 0 2px 8px -2px rgba(0,0,0,0.05);
+  }
+
+  .g-cell {
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1.25rem;
+    border: none;
+  }
+
+  /* Numpad styling */
+  .numpad-wrap {
+    padding: 1rem;
+    background: var(--bg);
+    border-top: 2px solid var(--border);
+  }
+  .np-key {
+    border-radius: 12px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    font-weight: 600;
+    font-size: 1.25rem;
+    transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .np-key:active {
+    transform: scale(0.95);
+    background: var(--border);
+  }
+  .np-act {
+    background: var(--primary);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+  .np-act:active {
+    background: #2563eb;
+  }
+
+  /* Modals */
+  .modal {
+    border-radius: 20px;
+    border: 2px solid var(--border);
+    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3);
+    padding: 2rem;
+  }
+  .modal h2 {
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 1.5rem;
+  }
+  .modal-x {
+    top: 1.5rem;
+    right: 1.5rem;
+    background: var(--surface-hover);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text2);
+    transition: all 0.2s;
+  }
+  .modal-x:hover {
+    background: var(--border);
+    color: var(--text);
+  }
+
+  .stats-grid .st {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  }
+  .st-n {
+    font-weight: 800;
+    font-size: 1.75rem;
+  }
+  .st-l {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text3);
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  .continue-btn, .share-btn {
+    border-radius: 9999px;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .continue-btn:hover, .share-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+  }
+
+  /* Mobile: 20% vertical reduction — override experiment3 values */
+  @media (max-width: 480px) {
+    /* original: padding 1rem 1.5rem */
+    header { padding: 10px 16px; }
+    /* original: padding 1.35rem → 1.08rem (0.8×) */
+    .inv-card { padding: 1.08rem; margin-bottom: 0.8rem; }
+    /* original: 1.5rem, margin-bottom 1rem */
+    #inv-name { font-size: 1.2rem; margin-bottom: 0.6rem; }
+    /* original: margin 1.5rem auto */
+    .inv-img { margin: 1rem auto; }
+    /* input cells, numpad — same as desktop */
+  }
+</style>
+<script>var SHOW_ADS = true;</script>
+</head>
+<body class="no-color-transition">
+<script>(function(){try{var p=JSON.parse(localStorage.getItem('wi_prefs'))||{};document.body.setAttribute('data-theme',p.theme||'dark');document.body.setAttribute('data-scheme',p.scheme!=null?p.scheme:0);if(p.bgTheme)document.body.setAttribute('data-bg-theme',p.bgTheme);}catch(e){document.body.setAttribute('data-theme','dark');document.body.setAttribute('data-scheme','0');}})();</script>
+<div id="app-root">
+
+<header>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button id="btn-menu" style="background:var(--surface);border:2px solid var(--border);color:var(--text2);width:34px;height:34px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;margin-left:-8px;" title="Menu"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+    <a href="index.html" class="logo" style="text-decoration:none;"><span class="dot-i">i<span class="dot-circle"></span></span>nven<span class="tle">tle</span></a>
+  </div>
+  <div class="hdr-btns">
+    <button id="btn-scheme" title="Change Colors" style="display:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12" r="2.5"/><path d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10c1.38 0 2.5-1.12 2.5-2.5 0-.61-.23-1.21-.64-1.67A1.37 1.37 0 0113.5 17c.75 0 1.37-.56 1.48-1.29C18.07 14.94 22 11.07 22 6c0-2.21-4.49-4-10-4z"/></svg></button>
+    <button id="btn-sound" title="Sound"></button>
+    <a href="infinite.html" id="btn-infinite" title="Infinite Mode" style="text-decoration:none;"><button><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.178 8c5.096 0 5.096 8 0 8-5.095 0-7.133-8-12.739-8-4.585 0-4.585 8 0 8 5.606 0 7.644-8 12.739-8z"/></svg></button></a>
+    <button id="btn-help" title="Help"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></button>
+    <button id="btn-stats" title="Stats"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></button>
+    <!-- Stats page hidden until launch: <a href="stats.html"><button title="Global Stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></button></a> -->
+    <button id="btn-settings" title="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1.08-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1.08 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33h.08a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v.08a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>
+  </div>
+</header>
+
+
+<main>
+  <div class="game-scroll" id="game-scroll">
+    <div class="inv-card">
+      <div class="inv-label" id="puzzle-num"></div>
+      <div id="inv-name"></div>
+      <div id="progress-dots"></div>
+    </div>
+    <div id="round-display" class="round-counter"></div>
+
+    <div class="inv-img" id="inv-img"></div>
+    <div class="inv-desc" id="inv-desc"></div>
+
+    <div class="col-labels" id="col-labels"></div>
+
+    <div id="guesses"></div>
+
+    <div class="input-row" id="input-row">
+      <div class="input-era ad" id="input-era" data-i18n="era.ad">AD</div>
+      <div class="input-cells" id="input-cells">
+        <div class="input-cell" id="ic-0"></div>
+        <div class="input-cell" id="ic-1"></div>
+        <div class="input-cell" id="ic-2"></div>
+        <div class="input-cell" id="ic-3"></div>
+      </div>
+    </div>
+
+    <div id="bonus-area"></div>
+  </div>
+
+  <div class="numpad-wrap" id="numpad-wrap">
+    <div class="np-grid" id="numpad"></div>
+  </div>
+</main>
+
+
+<div id="toast-box"></div>
+
+</div><!-- /app-root -->
+
+<!-- Support Modal (replaces ad interstitial until AdSense approval) -->
+<div class="ad-modal-bg" id="m-ad">
+  <div class="ad-modal modal">
+    <div style="text-align:center;padding:12px 8px 0;">
+      <div style="font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:6px;" data-i18n="support.enjoying">Enjoying Inventle?</div>
+      <div style="font-size:0.85rem;color:var(--text3);margin-bottom:14px;" data-i18n="support.help">Help keep the game running</div>
+      <a href="https://ko-fi.com/blakeypooh" target="_blank" rel="noopener" class="continue-btn" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;width:150px;height:44px;margin:0 auto;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="filter:brightness(0);"><path d="M17 8h1a4 4 0 010 8h-1"/><path d="M3 8h14v9a4 4 0 01-4 4H7a4 4 0 01-4-4V8z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg><span data-i18n="btn.support">Support</span></a>
+      <div style="margin-top:10px;"><a href="#" id="support-dismiss" style="color:var(--text3);font-size:0.75rem;text-decoration:none;opacity:0.5;transition:opacity 0.2s;" data-i18n="support.noThanks">No thanks</a></div>
+    </div>
+    <div style="border-top:2px solid var(--border);margin:16px 0 0;padding-top:16px;">
+      <div class="ad-btns" id="ad-btns"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="modal-bg" id="m-stats">
+  <div class="modal">
+    <button class="modal-x" id="x-stats">&times;</button>
+    <h2 data-i18n="stats.title">Statistics</h2>
+    <div class="stats-grid">
+      <div class="st"><div class="st-n" id="s-played">0</div><div class="st-l" data-i18n="stats.played">Played</div></div>
+      <div class="st"><div class="st-n" id="s-win">0</div><div class="st-l" data-i18n="stats.winPct">Win %</div></div>
+      <div class="st"><div class="st-n" id="s-streak">0</div><div class="st-l" data-i18n="stats.winStreak">Win Streak</div></div>
+      <div class="st"><div class="st-n" id="s-max">0</div><div class="st-l" data-i18n="stats.bestWin">Best Win</div></div>
+      <div class="st"><div class="st-n" id="s-pstreak">0</div><div class="st-l" data-i18n="stats.dailyStreak">Daily Streak</div></div>
+      <div class="st"><div class="st-n" id="s-pmax">0</div><div class="st-l" data-i18n="stats.bestDaily">Best Daily</div></div>
+    </div>
+    <h2 data-i18n="stats.distribution">Distribution</h2>
+    <div id="dist"></div>
+    <div id="bonus-stats-area"></div>
+    <div id="result-card"></div>
+    <div id="countdown" style="text-align:center;"></div>
+    <div style="text-align:center;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+      <a href="infinite.html" id="keep-btn" class="share-btn" style="display:none;text-decoration:none;animation:none;" data-i18n="stats.keepPlaying">KEEP PLAYING</a>
+      <button class="share-btn" id="share-btn" style="display:none;"><span data-i18n="stats.share">SHARE</span> &#x1f4cb;</button>
+    </div>
+    <!-- Hidden until stats launch: <div style="text-align:center;margin-top:12px;"><a href="stats.html" class="share-btn" style="background:var(--surface);color:var(--text2);border:2px solid var(--border);font-size:0.8rem;padding:10px 24px;text-decoration:none;">GLOBAL STATS &#x1f30d;</a></div> -->
+    <div style="text-align:center;margin-top:24px;padding-top:16px;border-top:2px solid var(--border);">
+      <a href="https://ko-fi.com/blakeypooh" target="_blank" rel="noopener" class="share-btn" style="background:var(--surface);color:var(--text);border:2px solid var(--border);text-decoration:none;animation:none;font-size:0.85rem;padding:10px 24px;display:inline-flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 010 8h-1"/><path d="M3 8h14v9a4 4 0 01-4 4H7a4 4 0 01-4-4V8z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg><span data-i18n="btn.support">Support</span></a>
+      <div style="margin-top:10px;"><a href="https://github.com/ITakeCake" target="_blank" rel="noopener" style="color:var(--text3);font-size:0.9rem;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:color 0.2s;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>ITakeCake</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- Help -->
+<div class="modal-bg" id="m-help">
+  <div class="modal">
+    <button class="modal-x" id="x-help">&times;</button>
+    <h2 data-i18n="help.title">How to Play</h2>
+    <div class="help-s"><p data-i18n="help.intro" data-i18n-html="1">Guess the <strong style="color:var(--primary)">year</strong> an invention was created. You get <strong style="color:var(--text)">6 tries</strong>.</p></div>
+    <div class="help-s">
+      <h3 data-i18n="help.colors">Colors</h3>
+      <div class="ex-cells">
+        <div class="ex-c" style="background:var(--right);color:#fff;border:none;">1</div>
+        <div class="ex-c" style="background:var(--near);color:#fff;border:none;">8</div>
+        <div class="ex-c" style="background:var(--wrong);color:#fff;border:none;">2</div>
+        <div class="ex-c" style="background:var(--wrong);color:#fff;border:none;">0</div>
+      </div>
+      <ul>
+        <li data-i18n="help.emerald" data-i18n-html="1"><strong style="color:var(--right);">Emerald</strong> = exact digit</li>
+        <li data-i18n="help.amber" data-i18n-html="1"><strong style="color:var(--near);">Amber</strong> = off by 1</li>
+        <li data-i18n="help.slate" data-i18n-html="1"><strong style="color:var(--text3);">Slate</strong> = off by 2+</li>
+      </ul>
+      <p data-i18n="help.colorsGuide">The colored digits guide you to the answer.</p>
+    </div>
+    <div class="help-s"><h3 data-i18n="help.bcAd">BC / AD</h3><p data-i18n="help.bcAdDesc" data-i18n-html="1">Tap the era chip or press <strong style="color:var(--primary)">B</strong> to toggle.</p></div>
+    <div class="help-s"><h3 data-i18n="help.bonusRounds">Bonus Rounds</h3><p data-i18n="help.bonusRoundsDesc" data-i18n-html="1">After the main game, guess the <strong style="color:var(--primary)">country</strong> and <strong style="color:var(--primary)">inventor</strong> for bonus points!</p></div>
+    <div class="help-s"><h3 data-i18n="help.settingsTitle">Settings</h3><p data-i18n="help.settingsDesc" data-i18n-html="1">Tap the <strong style="color:var(--text)">&#x2699;</strong> gear icon to change theme, colors, and toggle animations.</p></div>
+  </div>
+</div>
+
+<!-- Settings -->
+<div class="modal-bg" id="m-settings">
+  <div class="modal">
+    <button class="modal-x" id="x-settings">&times;</button>
+    <h2 data-i18n="settings.title">Settings</h2>
+
+    <!-- Language section -->
+    <div class="settings-section">
+      <h3 data-i18n="settings.language">Language</h3>
+      <div class="setting-row">
+        <div>
+          <select id="lang-select" style="background:var(--surface);color:var(--text);border:2px solid var(--border);border-radius:8px;padding:8px 12px;font-size:0.9rem;font-weight:600;width:100%;cursor:pointer;font-family:inherit;">
+            <!-- Options populated by i18n-patch.js -->
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <h3 data-i18n="settings.appearance">Appearance</h3>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label" data-i18n="settings.darkMode">Dark Mode</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="set-dark"><span class="slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label" data-i18n="settings.colorScheme">Color Scheme</div>
+        </div>
+        <div class="scheme-btns" id="scheme-btns">
+          <button class="scheme-btn" data-scheme="0" data-i18n="settings.default">Default</button>
+          <button class="scheme-btn" data-scheme="1">Deut</button>
+          <button class="scheme-btn" data-scheme="2">Trit</button>
+          <button class="scheme-btn" data-scheme="3">Prot</button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label" data-i18n="settings.colorBlindBtn">Color Blind Button</div>
+          <div class="setting-sub" data-i18n="settings.colorBlindSub">Show color scheme toggle in header</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="set-scheme-btn"><span class="slider"></span></label>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <h3 data-i18n="settings.animations">Animations</h3>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label" data-i18n="settings.spinAnimation">Spin Animation</div>
+          <div class="setting-sub" data-i18n="settings.spinSub">Digit reel effect on guesses</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="set-spin"><span class="slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label" data-i18n="settings.goldGlow">Gold Glow</div>
+          <div class="setting-sub" data-i18n="settings.goldGlowSub">Glow effect on correct digits</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="set-glow"><span class="slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label" data-i18n="settings.soundEffects">Sound Effects</div>
+          <div class="setting-sub" data-i18n="settings.soundEffectsSub">Clicks and game sounds</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="set-sound"><span class="slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label" data-i18n="settings.rainbowInfinite">Rainbow Infinite</div>
+          <div class="setting-sub" data-i18n="settings.rainbowSub">Animated rainbow text on Infinite mode</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="set-rainbow"><span class="slider"></span></label>
+      </div>
+    </div>
+
+
+    <div class="settings-footer">
+      <a href="#" id="link-privacy" style="color:var(--text3);font-size:0.85rem;text-decoration:none;display:block;margin-bottom:8px;transition:color 0.2s;" data-i18n="settings.privacyPolicy">Privacy Policy</a>
+      <a href="#" id="link-contact" style="color:var(--text3);font-size:0.85rem;text-decoration:none;display:block;margin-bottom:8px;transition:color 0.2s;" data-i18n="settings.contact">Contact</a>
+      <div style="display:flex;gap:20px;justify-content:center;align-items:center;">
+        <a href="https://ko-fi.com/blakeypooh" target="_blank" rel="noopener" style="color:var(--text3);font-size:0.85rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:color 0.2s;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 010 8h-1"/><path d="M3 8h14v9a4 4 0 01-4 4H7a4 4 0 01-4-4V8z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg><span data-i18n="settings.support">Support</span></a>
+        <a href="https://github.com/ITakeCake" target="_blank" rel="noopener" style="color:var(--text3);font-size:0.85rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:color 0.2s;"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Privacy Policy -->
+<div class="modal-bg" id="m-privacy">
+  <div class="modal">
+    <button class="modal-x" id="x-privacy">&times;</button>
+    <h2 data-i18n="privacy.title">Privacy Policy</h2>
+    <div class="help-s">
+      <p data-i18n="privacy.lastUpdated" data-i18n-html="1"><strong style="color:var(--text)">Last updated:</strong> March 2026</p>
+    </div>
+    <div class="help-s">
+      <h3 data-i18n="privacy.whatWeCollect">What We Collect</h3>
+      <p data-i18n="privacy.collectIntro" data-i18n-html="1">Inventle collects <strong style="color:var(--text)">anonymous gameplay statistics</strong> to improve the game and power features like global leaderboards. This includes:</p>
+      <ul>
+        <li data-i18n="privacy.guesses">Number of guesses per puzzle</li>
+        <li data-i18n="privacy.bonusResults">Bonus round results</li>
+        <li data-i18n="privacy.approxCountry">Approximate country (derived from IP address)</li>
+        <li data-i18n="privacy.deviceType">General device type (mobile/desktop)</li>
+      </ul>
+    </div>
+    <div class="help-s">
+      <h3 data-i18n="privacy.whatWeDont">What We Don't Collect</h3>
+      <ul>
+        <li data-i18n="privacy.noIp">No IP addresses stored — ever</li>
+        <li data-i18n="privacy.noNames">No names, emails, or account information</li>
+        <li data-i18n="privacy.noLocation">No precise location data</li>
+        <li data-i18n="privacy.noIdentifiers">No personal identifiers of any kind</li>
+        <li data-i18n="privacy.noFingerprint">No device fingerprinting or cross-session tracking</li>
+        <li data-i18n="privacy.noCookies">No cookies for tracking (only ad network cookies if applicable)</li>
+      </ul>
+    </div>
+    <div class="help-s">
+      <h3 data-i18n="privacy.ipTitle">IP Addresses &amp; Identifying Data</h3>
+      <p data-i18n="privacy.ipText" data-i18n-html="1">We <strong style="color:var(--text)">never store IP addresses</strong>. When gameplay stats are submitted, a third-party geolocation service determines your approximate country from your IP. The IP is processed in-transit only and is <strong style="color:var(--text)">never logged, saved, or recorded</strong> by Inventle in any form. We have no way to identify, track, or re-identify any individual player. All stored data is fully anonymous and cannot be linked back to any person or device.</p>
+    </div>
+    <div class="help-s">
+      <h3 data-i18n="privacy.localStorageTitle">Local Storage</h3>
+      <p data-i18n="privacy.localStorageText">Your game progress, statistics, and preferences (theme, color scheme, animation settings) are stored locally on your device using browser localStorage. This data never leaves your device.</p>
+    </div>
+    <div class="help-s">
+      <h3 data-i18n="privacy.advertisingTitle">Advertising</h3>
+      <p data-i18n="privacy.advertisingText">Inventle may display advertisements through third-party ad networks (such as Google AdSense). These networks may use cookies to serve ads based on your browsing activity. You can manage cookie preferences through your browser settings.</p>
+    </div>
+    <div class="help-s">
+      <h3 data-i18n="privacy.dataSharingTitle">Data Sharing</h3>
+      <p data-i18n="privacy.dataSharingText" data-i18n-html="1">We do <strong style="color:var(--text)">not sell, trade, or share</strong> any collected data with third parties, except as required by ad network integrations described above.</p>
+    </div>
+    <div class="help-s">
+      <h3 data-i18n="privacy.contactTitle">Contact</h3>
+      <p data-i18n="privacy.contactText" data-i18n-html="1">Questions about this policy? Reach out at <strong style="color:var(--text)">inventle.game@gmail.com</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- Contact -->
+<div class="modal-bg" id="m-contact">
+  <div class="modal">
+    <button class="modal-x" id="x-contact">&times;</button>
+    <h2 data-i18n="contact.title">Contact</h2>
+    <div class="help-s" style="text-align:center;">
+      <p style="margin-bottom:16px;" data-i18n="contact.feedback">Have feedback, found a bug, or just want to say hi?</p>
+      <p style="margin-bottom:12px;"><strong style="color:var(--text);font-size:1.1rem;">inventle.game@gmail.com</strong></p>
+      <p style="margin-bottom:16px;color:var(--text3);" data-i18n="contact.response">We typically respond within a few days.</p>
+      <a href="https://github.com/ITakeCake" target="_blank" rel="noopener" style="color:var(--text2);font-size:0.9rem;text-decoration:none;display:inline-flex;align-items:center;gap:6px;"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>@ITakeCake on GitHub</a>
+    </div>
+  </div>
+</div>
+
+
+<!-- Slide-out Nav Menu -->
+<div id="nav-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:998;transition:opacity 0.2s;opacity:0;pointer-events:none;visibility:hidden;"></div>
+<nav id="nav-menu" style="position:fixed;top:0;left:0;transform:translateX(-100%);width:280px;height:100%;background:var(--surface);border-right:3px solid var(--border);box-shadow:4px 0 24px rgba(0,0,0,0.1);z-index:999;transition:transform 0.2s cubic-bezier(0.16,1,0.3,1);overflow-y:auto;display:flex;flex-direction:column;will-change:transform;visibility:hidden;">
+  <div style="padding:1.5rem;border-bottom:3px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+    <a href="index.html" class="logo" style="font-size:1.65rem;letter-spacing:-0.5px;text-decoration:none;"><span class="dot-i">i<span class="dot-circle"></span></span>nven<span class="tle">tle</span></a>
+    <button id="nav-close" style="position:static;width:36px;height:36px;background:var(--surface-hover);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text2);cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='var(--border)';this.style.color='var(--text)';this.style.transform='rotate(90deg) scale(1.1)';" onmouseout="this.style.background='var(--surface-hover)';this.style.color='var(--text2)';this.style.transform='none';">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+  </div>
+  <div style="padding:1rem 0;flex:1;">
+    <a href="index.html" class="nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span data-i18n="nav.dailyPuzzle">Daily Puzzle</span>
+    </a>
+    <a href="infinite.html" class="nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.178 8c5.096 0 5.096 8 0 8-5.095 0-7.133-8-12.739-8-4.585 0-4.585 8 0 8 5.606 0 7.644-8 12.739-8z"/></svg>
+      <span data-i18n="nav.infiniteMode">Infinite Mode</span>
+    </a>
+    <a href="stats.html" class="nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+      <span data-i18n="nav.globalStats">Global Stats</span>
+    </a>
+    <div style="height:2px;background:var(--border);margin:12px 20px;border-radius:1px;"></div>
+    <a href="about.html" class="nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      <span data-i18n="nav.about">About</span>
+    </a>
+    <a href="how-to-play.html" class="nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span data-i18n="help.title">How to Play</span>
+    </a>
+    <a href="/inventions/" class="nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+      <span data-i18n="nav.browseInventions">Browse Inventions</span>
+    </a>
+    <a href="privacy.html" class="nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      <span data-i18n="privacy.title">Privacy Policy</span>
+    </a>
+    <a href="terms.html" class="nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <span data-i18n="nav.termsOfService">Terms of Service</span>
+    </a>
+    <a href="contact.html" class="nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <span data-i18n="contact.title">Contact</span>
+    </a>
+  </div>
+  <div style="padding:1.5rem;border-top:3px solid var(--border);display:flex;flex-direction:column;gap:12px;">
+    <a href="https://ko-fi.com/blakeypooh" target="_blank" rel="noopener" class="nav-footer-link">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 010 8h-1"/><path d="M3 8h14v9a4 4 0 01-4 4H7a4 4 0 01-4-4V8z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>
+      <span data-i18n="settings.support">Support</span>
+    </a>
+    <a href="https://github.com/ITakeCake" target="_blank" rel="noopener" class="nav-footer-link">
+      <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      <span data-i18n="nav.github">GitHub</span>
+    </a>
+  </div>
+</nav>
+
+<style>
+    header .logo { transition: transform 0.2s, filter 0.2s; }
+    header .logo:hover { transform: scale(1.05); filter: brightness(1.1); opacity: 1; }
+    #btn-menu:hover { background: var(--surface-hover) !important; color: var(--text) !important; border-color: var(--text3) !important; }
+    #nav-menu .logo { transition: transform 0.2s, filter 0.2s; }
+    #nav-menu .logo:hover { transform: scale(1.05); filter: brightness(1.1); opacity: 1; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    margin: 4px 12px;
+    color: var(--text2);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-radius: 12px;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .nav-item:hover {
+    background: var(--surface-hover);
+    color: var(--text);
+  }
+  @media (hover: hover) { .nav-item:hover { transform: translateX(4px); } }
+  .nav-item svg {
+    color: var(--text3);
+    transition: color 0.2s;
+    flex-shrink: 0;
+  }
+  .nav-item:hover svg {
+    color: var(--primary);
+  }
+  
+  .nav-footer-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text3);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+  .nav-footer-link:hover {
+    color: var(--text);
+  }
+
+  #nav-menu.open { left: 0; }
+  #nav-overlay.open { display: block !important; opacity: 1; }
+</style>
+
+<script>
+(function(){
+  var menu=document.getElementById('nav-menu');
+  var overlay=document.getElementById('nav-overlay');
+  var btnOpen=document.getElementById('btn-menu');
+  var btnClose=document.getElementById('nav-close');
+
+  function openMenu(){menu.style.visibility='visible';menu.style.transform='translateX(0)';overlay.style.visibility='visible';overlay.style.pointerEvents='auto';overlay.style.opacity='1';document.body.classList.add('nav-open');}
+  function closeMenu(){
+    menu.style.transform='translateX(-100%)';
+    overlay.style.opacity='0';
+    overlay.style.pointerEvents='none';
+    document.body.classList.remove('nav-open');
+    var hideMenu = function(){ menu.style.visibility='hidden'; };
+    var hideOverlay = function(){ overlay.style.visibility='hidden'; };
+    menu.addEventListener('transitionend', function h(){ hideMenu(); menu.removeEventListener('transitionend', h); });
+    overlay.addEventListener('transitionend', function h(){ hideOverlay(); overlay.removeEventListener('transitionend', h); });
+    setTimeout(function(){ hideMenu(); hideOverlay(); }, 260);
+  }
+
+  btnOpen.onclick=openMenu;
+  btnClose.onclick=closeMenu;
+  overlay.onclick=closeMenu;
+
+  // Close on Escape
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&menu.style.transform==='translateX(0)')closeMenu();});
+
+  // Pre-render: force browser to rasterize the menu layer so first open is instant
+  requestAnimationFrame(function(){menu.style.visibility='visible';menu.style.opacity='0';requestAnimationFrame(function(){menu.style.visibility='hidden';menu.style.opacity='';});});
+})();
+</script>
+
+<!-- About Modal -->
+<div class="modal-bg" id="m-about">
+  <div class="modal">
+    <button class="modal-x" id="x-about">&times;</button>
+    <h2 data-i18n="nav.about">About</h2>
+    <div class="help-s">
+      <p style="margin-bottom:16px;" data-i18n="aboutModal.intro" data-i18n-html="1">Inventle is a daily guessing game where you try to figure out the year an invention was created. Think Wordle, but for history nerds.</p>
+      <p style="margin-bottom:16px;" data-i18n="aboutModal.gameplay" data-i18n-html="1">Each day brings a new invention. You get <strong style="color:var(--text)">6 guesses</strong>, and the colored digits guide you closer to the answer. After the main round, test your knowledge with bonus rounds on the <strong style="color:var(--text)">country</strong> and <strong style="color:var(--text)">inventor</strong>.</p>
+      <p style="margin-bottom:16px;" data-i18n="aboutModal.database" data-i18n-html="1">There are <strong style="color:var(--text)">773 inventions</strong> in the database, spanning from ancient history to modern day. Come back every day for a new puzzle.</p>
+    </div>
+    <div class="help-s">
+      <h3 data-i18n="aboutModal.madeBy">Made by</h3>
+      <p data-i18n="aboutModal.builtWith">Built with plain HTML, CSS, and JavaScript. No frameworks, no build tools, just vibes.</p>
+      <p style="margin-top:12px;"><a href="https://github.com/ITakeCake" target="_blank" rel="noopener" style="color:var(--text2);text-decoration:none;display:inline-flex;align-items:center;gap:6px;font-weight:600;"><svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>@ITakeCake</a></p>
+    </div>
+  </div>
+</div>
+<script>
+  document.getElementById('x-about').onclick=function(){document.getElementById('m-about').classList.remove('show');};
+</script>
+
+<aside class="ad-sidebar" id="ad-sidebar">
+  <div class="ad-label" style="text-align:center;padding-top:8px;font-size:0.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;">Advertisement</div>
+  <div class="ad-slot" id="ad-slot-sidebar" style="text-align:center;">
+    <!-- Adsterra 160x600 — isolated in an iframe so the ad network never blocks the game's
+         own scripts from loading; the page stays interactive while the ad fills in its box -->
+    <iframe title="Advertisement" scrolling="no" frameborder="0" width="160" height="600" style="border:0;display:block;margin:0 auto;overflow:hidden" srcdoc='<body style="margin:0;overflow:hidden"><script type="text/javascript">atOptions={"key":"4d92fd1d08670978623091223ae12db9","format":"iframe","height":600,"width":160,"params":{}};</script><script type="text/javascript" src="https://www.highperformanceformat.com/4d92fd1d08670978623091223ae12db9/invoke.js"></script></body>'></iframe>
+  </div>
+</aside>
+
+<!-- Mobile bottom ad anchor (320x50) — isolated in an iframe so its Adsterra tag can't
+     collide with the desktop sidebar's shared atOptions global -->
+<div class="mobile-ad-anchor" aria-hidden="true">
+  <iframe title="Advertisement" scrolling="no" frameborder="0" width="320" height="50" style="border:0;display:block;overflow:hidden" srcdoc='<body style="margin:0;overflow:hidden"><script type="text/javascript">atOptions={"key":"37caf5aa9d19dd90b661fc0b2392cad2","format":"iframe","height":50,"width":320,"params":{}};</script><script type="text/javascript" src="https://www.highperformanceformat.com/37caf5aa9d19dd90b661fc0b2392cad2/invoke.js"></script></body>'></iframe>
+</div>
+
+<script src="js/i18n.js?v=b23"></script>
+<script src="js/data-daily.js?v=b23"></script>
+<script src="js/data-overlay.js?v=b23"></script>
+<script src="js/core.js?v=b27"></script>
+<script src="js/game.js?v=b27"></script>
+<script src="js/i18n-patch.js?v=b27"></script>
+<script src="js/sound.js?v=b26"></script>
+<script src="js/dev.js?v=b23"></script>
+<script>if(typeof SHOW_ADS!=='undefined'&&!SHOW_ADS){var _ad=document.getElementById('ad-sidebar');if(_ad)_ad.style.display='none';}</script>
+</body>
+</html>
