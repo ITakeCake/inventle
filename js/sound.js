@@ -192,7 +192,12 @@
   function sample(url, o) {
     o = o || {};
     var b = _buf[url];
-    if (!b) { loadSample(url); return; }               // silent this once, ready the next
+    if (!b) {
+      loadSample(url);
+      // a click that beats its own download still ticks instead of going dead
+      if (o.fb) { try { o.fb(); } catch (e) {} }
+      return;
+    }
     var c = AC(); if (!c) return;
     var src = c.createBufferSource(), g = c.createGain();
     src.buffer = b;
@@ -227,10 +232,16 @@
 
   // ------------------------------------------------------------- the sounds
   // null = the hook is live but no sound is assigned to that slot
+  // stand-in tick while a key sound's file is still downloading
+  function fbTick() {
+    noise({ f: 1800, dur: 0.02, g: 0.25, q: 8, atk: 0.001 });
+    tone({ f: 180, f2: 120, dur: 0.03, g: 0.18, wave: 'triangle', atk: 0.001 });
+  }
+
   var FX = {
-    click:      function () { sample(SND.keyPress,   { g: 0.50 }); },
-    keyDelete:  function () { sample(SND.backspace,  { g: 0.9 }); },
-    keyEnter:   function () { sample(SND.enter,      { g: 0.85 }); },
+    click:      function () { sample(SND.keyPress,   { g: 0.50, fb: fbTick }); },
+    keyDelete:  function () { sample(SND.backspace,  { g: 0.9,  fb: fbTick }); },
+    keyEnter:   function () { sample(SND.enter,      { g: 0.85, fb: fbTick }); },
     win:        function () { sample(SND.win,        { g: 0.85 }); },
     lose:       function () { sample(SND.lose,       { g: 0.85 }); },
     bonusCorrect: function () { sample(SND.bonusOk,  { g: 0.9 }); },
@@ -293,7 +304,25 @@
     var fn = FX[id];
     if (typeof fn !== 'function') return;
     var lv = LEVEL[id];
-    try { lv ? withGain(lv, fn) : fn(); } catch (e) {}
+    var run = function () { try { lv ? withGain(lv, fn) : fn(); } catch (e) {} };
+    var c = AC();
+    // On the first gesture the context is still suspended, and audio scheduled
+    // before the output hardware starts is dropped. Defer until the clock is live,
+    // with a timeout fallback so a stuck promise cannot mute the sound.
+    if (c && c.state !== 'running') {
+      var done = false;
+      var kick = function () {
+        if (done) return; done = true;
+        try { c.removeEventListener('statechange', onSt); } catch (e) {}
+        run();
+      };
+      var onSt = function () { if (c.state === 'running') kick(); };
+      try { c.addEventListener('statechange', onSt); } catch (e) {}
+      try { c.resume().then(kick, kick); } catch (e) {}
+      setTimeout(kick, 700);
+      return;
+    }
+    run();
   }
 
   var lastAt = {};
