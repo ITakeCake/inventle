@@ -250,6 +250,7 @@ Most sound effects come from [Pixabay](https://pixabay.com) under the [Pixabay C
 | Sound in game | Effect | Creator |
 | ------------- | ------ | ------- |
 | Number key click | [Single Key Press](https://pixabay.com/sound-effects/single-key-press-393908/) | [DRAGON-STUDIO](https://pixabay.com/users/dragon-studio-38165424/) |
+| Enter key | [Button Press](https://pixabay.com/sound-effects/film-special-effects-button-press-382713/) | [DRAGON-STUDIO](https://pixabay.com/users/dragon-studio-38165424/) |
 | Delete key | [keyboard typing one short 1](https://pixabay.com/sound-effects/keyboard-typing-one-short-1-292590/) | [NCPRIME](https://pixabay.com/users/ncprime-45698203/) |
 | Puzzle solved | [Success](https://pixabay.com/sound-effects/success-48018/) | [freesound_community](https://pixabay.com/users/freesound_community-46691455/), original by [Kagateni](https://freesound.org/people/Kagateni/) |
 | Puzzle failed | [Wrong Answer](https://pixabay.com/sound-effects/wrong-answer-129254/) | [Universfield](https://pixabay.com/users/universfield-28281460/) |
@@ -259,7 +260,7 @@ Most sound effects come from [Pixabay](https://pixabay.com) under the [Pixabay C
 | Shield earned | [Metal Hit](https://pixabay.com/sound-effects/metal-hit-153323/) | [Universfield](https://pixabay.com/users/universfield-28281460/) |
 | Shield used | [Metal Punch](https://pixabay.com/sound-effects/metal-punch-142334/) | [Universfield](https://pixabay.com/users/universfield-28281460/) |
 
-The enter key press is a separately sourced recording. The audio files themselves are not in this repository, the license covers use on the site but not redistribution of the files. When a file is absent, `js/sound.js` falls back to a small synthesized tick for the key sounds and stays silent for the rest.
+The audio files themselves are not in this repository, the license covers use on the site but not redistribution of the files. When a file is absent, `js/sound.js` falls back to a small synthesized tick for the key sounds and stays silent for the rest.
 
 ## Data
 
